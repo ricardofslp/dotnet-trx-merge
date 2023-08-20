@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "versionize": {
+      "version": "1.18.0",
+      "commands": [
+        "versionize"
+      ]
+    },
+    "husky": {
+      "version": "0.5.4",
+      "commands": [
+        "husky"
+      ]
+    },
+    "dotnet-tool-exec": {
+      "version": "3.1.1",
+      "commands": [
+        "execute"
+      ]
+    }
+  }
+}
