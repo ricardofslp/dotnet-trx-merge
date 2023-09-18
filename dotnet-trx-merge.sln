@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-trx-merge", "src\dotnet-trx-merge\dotnet-trx-merge.csproj", "{133DBE5D-D9B7-4DB9-B769-79CD34E64C51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-trx-merge.UnitTests", "test\dotnet-trx-merge.UnitTests\dotnet-trx-merge.UnitTests.csproj", "{D5E88B3F-35F8-480E-9EEF-F444090CDCE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-trx-merge.IntegrationTests", "test\dotnet-trx-merge.IntegrationTests\dotnet-trx-merge.IntegrationTests.csproj", "{1C185417-D514-4545-B65F-ACE69D2778D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-trx-merge.Common", "test\dotnet-trx-merge.Common\dotnet-trx-merge.Common.csproj", "{1251BAB1-D4B5-46F9-B3A0-41DB7F8C3C36}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{133DBE5D-D9B7-4DB9-B769-79CD34E64C51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{133DBE5D-D9B7-4DB9-B769-79CD34E64C51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{133DBE5D-D9B7-4DB9-B769-79CD34E64C51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{133DBE5D-D9B7-4DB9-B769-79CD34E64C51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5E88B3F-35F8-480E-9EEF-F444090CDCE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5E88B3F-35F8-480E-9EEF-F444090CDCE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5E88B3F-35F8-480E-9EEF-F444090CDCE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5E88B3F-35F8-480E-9EEF-F444090CDCE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C185417-D514-4545-B65F-ACE69D2778D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C185417-D514-4545-B65F-ACE69D2778D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C185417-D514-4545-B65F-ACE69D2778D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C185417-D514-4545-B65F-ACE69D2778D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1251BAB1-D4B5-46F9-B3A0-41DB7F8C3C36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1251BAB1-D4B5-46F9-B3A0-41DB7F8C3C36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1251BAB1-D4B5-46F9-B3A0-41DB7F8C3C36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1251BAB1-D4B5-46F9-B3A0-41DB7F8C3C36}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
