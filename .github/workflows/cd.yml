@@ -7,7 +7,7 @@ on:
 
 defaults:
   run:
-    working-directory: .
+    working-directory: src
 
 jobs:
   build_test_pack_push:
@@ -23,7 +23,7 @@ jobs:
           global-json-file: .config/global.json
 
       - name: build and test
-        run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage/lcov.info --configuration Release
+        run: dotnet test .. /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage/lcov.info --configuration Release
 
       - name: Coveralls UnitTests
         uses: coverallsapp/github-action@v2.2.1
@@ -38,7 +38,7 @@ jobs:
           flag-name: IntegrationTests
 
       - name: pack
-        run: dotnet pack --configuration Release --no-build --no-restore
+        run: dotnet pack dotnet-trx-merge --configuration Release --no-build --no-restore
 
       - name: push
         run: dotnet nuget push nupkg/dotnet-trx-merge.*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY --skip-duplicate

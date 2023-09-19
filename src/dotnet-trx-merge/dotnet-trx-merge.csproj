@@ -7,14 +7,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackAsTool>true</PackAsTool>
-        <PackageOutputPath>./nupkg</PackageOutputPath>
-        <PackageId>dotnet_trx_merge</PackageId>
+        <PackageOutputPath>../nupkg</PackageOutputPath>
+        <PackageId>dotnet-trx-merge</PackageId>
         <ToolCommandName>trx-merge</ToolCommandName>
         <AssemblyName>trx-merge</AssemblyName>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <Version>1.0.2</Version>
+        <Version>1.0.0</Version>
         <PackageProjectUrl>https://github.com/ricardofslp/dotnet-trx-merge</PackageProjectUrl>
         <Description>Allow the merge of several trx files in a single one</Description>
         <RepositoryUrl>https://github.com/ricardofslp/dotnet-trx-merge</RepositoryUrl>
@@ -25,7 +25,7 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
       <PackageReference Include="Spectre.Console" Version="0.47.0" />
       <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-      <PackageReference Include="System.IO.Abstractions" Version="19.2.51" />
+      <PackageReference Include="System.IO.Abstractions" Version="19.2.69" />
     </ItemGroup>
 
     <ItemGroup>
@@ -36,9 +36,9 @@
       <Content Include="..\..\CHANGELOG.md">
         <Link>CHANGELOG.md</Link>
       </Content>
-      <Content Include="..\..\README.md">
-        <Link>README.md</Link>
-      </Content>
+      <None Include="../../README.md" Pack="true" PackagePath="/">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
