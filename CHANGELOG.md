@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. See [versio
 
 
 
+<a name="1.0.4"></a>
+## [1.0.4](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.0.4) (2023-9-19)
+
+### Bug Fixes
+
+* cd pipeline ([e24f825](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/e24f825961e4bbbf947e12414d0bc21a9d2b12b6))
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.0.3) (2023-9-19)
 
