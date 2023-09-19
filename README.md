@@ -50,3 +50,10 @@ Give a :star: if this project helped you!
 Copyright © 2023 [Ricardo Pereira](https://github.com/ricardofslp).\
 This tool is licensed under MIT License. See the [LICENSE](/LICENSE) file for details.
 
+[1]: https://github.com/ricardofslp/dotnet-trx-merge/actions/workflows/cd.yml/badge.svg
+[2]: https://github.com/ricardofslp/dotnet-trx-merge/actions/workflows/cd.yml
+[3]: https://img.shields.io/nuget/v/dotnet-trx-merge.svg?label=dotnet-trx-merge
+[4]: https://www.nuget.org/packages/dotnet-trx-merge
+[5]: https://img.shields.io/nuget/dt/dotnet-trx-merge.svg?label=downloads
+[6]: https://coveralls.io/repos/github/ricardofslp/dotnet-trx-merge/badge.svg?branch=main
+[7]: https://coveralls.io/github/ricardofslp/dotnet-trx-merge?branch=main
