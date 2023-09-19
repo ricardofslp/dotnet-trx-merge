@@ -14,7 +14,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
         <PackageProjectUrl>https://github.com/ricardofslp/dotnet-trx-merge</PackageProjectUrl>
         <Description>Allow the merge of several trx files in a single one</Description>
         <RepositoryUrl>https://github.com/ricardofslp/dotnet-trx-merge</RepositoryUrl>
@@ -36,10 +36,9 @@
       <Content Include="..\..\CHANGELOG.md">
         <Link>CHANGELOG.md</Link>
       </Content>
-      <Content Include="..\..\README.md">
-        <Link>README.md</Link>
+      <None Include="../../README.md" Pack="true" PackagePath="/">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+      </None>
     </ItemGroup>
 
 </Project>
