@@ -41,6 +41,6 @@ jobs:
         run: dotnet pack --configuration Release --no-build --no-restore
 
       - name: push
-        run: dotnet nuget push dotnet-trx-merge/src/dotnet-trx-merge/nupkg/dotnet-trx-merge.*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY --skip-duplicate
+        run: dotnet nuget push /src/dotnet-trx-merge/nupkg/dotnet-trx-merge.*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY --skip-duplicate
         env:
           NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
