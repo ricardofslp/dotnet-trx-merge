@@ -34,7 +34,7 @@ trx-merge [OPTIONS]
 
 👥 **Contributors**
 
-[![Contributors](https://contrib.rocks/image?repo=joaoopereira/dotnet-test-rerun)](https://github.com/joaoopereira/dotnet-test-rerun/graphs/contributors)
+- Github: [@joaoopereira](https://github.com/joaoopereira)
 
 ## :handshake: Contributing
 

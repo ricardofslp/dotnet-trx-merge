@@ -49,7 +49,7 @@ public class MergeCommand : RootCommand
 
     private string[] GetTrxFiles()
     {
-        _log.Information("Start fetching trx files");
+        _log.Debug("Start fetching trx files");
         if (_config.IsDirectory())
         {
             string directoryPath = Path.GetDirectoryName(_config.Directory)!;
