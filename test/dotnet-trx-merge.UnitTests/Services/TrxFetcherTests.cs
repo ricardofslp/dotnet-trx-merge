@@ -34,6 +34,19 @@ public class TrxFetcherTests
             "SecondSimpleNumberCompare", 
             "Passed");
         
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(1);
+        ValidateTestDefinition(definitions.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare");
+        
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(1);
+        ValidateTestEntry(entries.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+        
         ValidateOutcome(mergedDocument, 1, 1, 0, "Completed");
     }
     
@@ -62,6 +75,28 @@ public class TrxFetcherTests
             "3dacbae9-707e-1881-d63c-3573123dffc6", 
             "SimpleNumberCompare", 
             "Passed");
+        
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(2);
+        ValidateTestDefinition(definitions.ElementAt(0), 
+            "0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare");
+        
+        ValidateTestDefinition(definitions.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare");
+        
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(2);
+        ValidateTestEntry(entries.ElementAt(0), 
+            "0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+        
+        ValidateTestEntry(entries.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6");
         
         ValidateOutcome(mergedDocument, 2, 1, 1, "Failed");
     }
@@ -92,6 +127,28 @@ public class TrxFetcherTests
             "SimpleNumberCompare", 
             "Passed");
         
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(2);
+        ValidateTestDefinition(definitions.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare");
+        
+        ValidateTestDefinition(definitions.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare");
+        
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(2);
+        ValidateTestEntry(entries.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+        
+        ValidateTestEntry(entries.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6");
+        
         ValidateOutcome(mergedDocument, 2, 2, 0, "Completed");
     }
     
@@ -121,6 +178,28 @@ public class TrxFetcherTests
             "SimpleNumberCompare", 
             "Passed");
         
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(2);
+        ValidateTestDefinition(definitions.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare");
+        
+        ValidateTestDefinition(definitions.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare");
+        
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(2);
+        ValidateTestEntry(entries.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+        
+        ValidateTestEntry(entries.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6");
+        
         ValidateOutcome(mergedDocument, 2, 2, 0, "Completed");
     }
     
@@ -144,6 +223,19 @@ public class TrxFetcherTests
             "SecondSimpleNumberCompare", 
             "Passed");
         
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(1);
+        ValidateTestDefinition(definitions.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare");
+        
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(1);
+        ValidateTestEntry(entries.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+        
         ValidateOutcome(mergedDocument, 1, 1, 0, "Completed");
     }
 
@@ -157,6 +249,26 @@ public class TrxFetcherTests
         testResult.Attribute("testId")!.Value.Should().Be(testId);
         testResult.Attribute("testName")!.Value.Should().Be(testName);
         testResult.Attribute("outcome")!.Value.Should().Be(outcome);
+    }
+
+    private static void ValidateTestDefinition(XElement testResult,
+        string executionId, 
+        string testId, 
+        string testName)
+    {
+        testResult.Attribute("id")!.Value.Should().Be(testId);
+        testResult.Attribute("name")!.Value.Should().Be(testName);
+        var execution = testResult.Descendants("Execution");
+        execution.Should().HaveCount(1);
+        execution.ElementAt(0).Attribute("id")!.Value.Should().Be(executionId);
+    }
+
+    private static void ValidateTestEntry(XElement testResult,
+        string executionId, 
+        string testId)
+    {
+        testResult.Attribute("executionId")!.Value.Should().Be(executionId);
+        testResult.Attribute("testId")!.Value.Should().Be(testId);
     }
     
     private static void ValidateOutcome(XDocument testResult,
