@@ -26,13 +26,13 @@ public class DotNetTrxMergeTests
     }
 
     [Fact]
-    public async Task DotnetTrxMerge_WithSelectingFiles_Success()
+    public void DotnetTrxMerge_WithSelectingFiles_Success()
     {
         // Arrange
         Environment.ExitCode = 0;
 
         // Act
-        var output = await RunDotNetTestRerunAndCollectOutputMessage("MergeWithTwoFilesAllPass",
+        var output = RunDotNetTestRerunAndCollectOutputMessage("MergeWithTwoFilesAllPass",
             $"-f {_dir}/MergeOnePassOneFailed/TrxAllPass.trx -f {_dir}/MergeOnePassOneFailed/TrxWithFailures.trx");
 
         // Assert
@@ -44,13 +44,13 @@ public class DotNetTrxMergeTests
     }
 
     [Fact]
-    public async Task DotnetTrxMerge_WithSelectingDir_Success()
+    public void DotnetTrxMerge_WithSelectingDir_Success()
     {
         // Arrange
         Environment.ExitCode = 0;
 
         // Act
-        var output = await RunDotNetTestRerunAndCollectOutputMessage("MergeWithTwoFilesAllPass",
+        var output = RunDotNetTestRerunAndCollectOutputMessage("MergeWithTwoFilesAllPass",
             $"-d {_dir}/MergeWithTwoFilesAllPass/");
 
         // Assert
@@ -61,13 +61,13 @@ public class DotNetTrxMergeTests
     }
 
     [Fact]
-    public async Task DotnetTrxMerge_WithNoFileFound_Success()
+    public void DotnetTrxMerge_WithNoFileFound_Success()
     {
         // Arrange
         Environment.ExitCode = 0;
 
         // Act
-        var output = await RunDotNetTestRerunAndCollectOutputMessage("MergeWithRecursiveOption",
+        var output = RunDotNetTestRerunAndCollectOutputMessage("MergeWithRecursiveOption",
             $"-d {_dir}/MergeWithRecursiveOption/");
 
         // Assert
@@ -77,13 +77,13 @@ public class DotNetTrxMergeTests
     }
 
     [Fact]
-    public async Task DotnetTrxMerge_WithRecursiveOption_Success()
+    public void DotnetTrxMerge_WithRecursiveOption_Success()
     {
         // Arrange
         Environment.ExitCode = 0;
 
         // Act
-        var output = await RunDotNetTestRerunAndCollectOutputMessage("MergeWithRecursiveOption",
+        var output = RunDotNetTestRerunAndCollectOutputMessage("MergeWithRecursiveOption",
             $"-d {_dir}/MergeWithRecursiveOption/ -r");
 
         // Assert
@@ -101,7 +101,7 @@ public class DotNetTrxMergeTests
         var outputFile = $"{_dir}/MergeWithRecursiveOption/mergeDocument.trx";
 
         // Act
-        var output = await RunDotNetTestRerunAndCollectOutputMessage("MergeWithRecursiveOption",
+        var _ = RunDotNetTestRerunAndCollectOutputMessage("MergeWithRecursiveOption",
             $"-d {_dir}/MergeWithRecursiveOption/ -r -o {outputFile}");
 
         // Assert
@@ -114,7 +114,7 @@ public class DotNetTrxMergeTests
     }
     
     
-    private async Task<string> RunDotNetTestRerunAndCollectOutputMessage(string proj, string args = "")
+    private string RunDotNetTestRerunAndCollectOutputMessage(string proj, string args = "")
     {
         var stringWriter = new StringWriter();
         Console.SetOut(stringWriter);

@@ -17,25 +17,32 @@ public class TrxFetcher : ITrxFetcher
 
     private void FetchOnlyLatest(XDocument mergedDocument, string[] filesToMerge)
     {
-        var testDictionary = new Dictionary<string, XElement>();
+        var testResultDictionary = new Dictionary<string, XElement>();
+        var testDefinitionsDictionary = new Dictionary<string, XElement>();
+        var testEntriesDictionary = new Dictionary<string, XElement>();
         var outcomeDictionary = new Dictionary<string, int>();
         foreach (var trxFile in filesToMerge)
         {
             var trxDocument = XDocument.Load(trxFile);
             var results = trxDocument.Descendants("UnitTestResult");
+            var definitions = trxDocument.Descendants("UnitTest");
+            var entries = trxDocument.Descendants("TestEntry");
             _log.Debug($"Found {results?.Count()} tests in file {trxFile}");
             foreach (var unitTestResult in results)
             {
                 var testId = unitTestResult.Attribute("testId")!.Value;
                 var endTime = DateTime.Parse(unitTestResult.Attribute("endTime")?.Value!);
 
-                if (!testDictionary.ContainsKey(testId) || DateTime.Parse(testDictionary[testId].Attribute("endTime")!.Value) < endTime)
+                if (!testResultDictionary.ContainsKey(testId) || DateTime.Parse(testResultDictionary[testId].Attribute("endTime")!.Value) < endTime)
                 {
-                    if (testDictionary.ContainsKey(testId))
-                        outcomeDictionary[testDictionary[testId].Attribute("outcome")!.Value.ToLower()]--;
+                    if (testResultDictionary.ContainsKey(testId))
+                        outcomeDictionary[testResultDictionary[testId].Attribute("outcome")!.Value.ToLower()]--;
                     
-                    testDictionary[testId] = unitTestResult;
-                    var outcomeValue = testDictionary[testId].Attribute("outcome")!.Value.ToLower();
+                    testResultDictionary[testId] = unitTestResult;
+                    testDefinitionsDictionary[testId] = GetTestDefinition(definitions, testId);
+                    testEntriesDictionary[testId] = GetTestEntry(entries, testId);
+                    
+                    var outcomeValue = testResultDictionary[testId].Attribute("outcome")!.Value.ToLower();
                     
                     if(!outcomeDictionary.ContainsKey(outcomeValue!))
                         outcomeDictionary[outcomeValue] = 0;
@@ -44,11 +51,16 @@ public class TrxFetcher : ITrxFetcher
                 }
             }
         }
-        // Create a new XElement for TestResults and add testDictionary.Values as child elements
-        var testResultsSection = new XElement("Results", testDictionary.Values);
+        // Create a new XElement for TestResults, TestDefinitions and TestEntries
+        // Add testDictionary.Values as child elements
+        var testResultsSection = new XElement("Results", testResultDictionary.Values);
+        var testDefinitionSection = new XElement("TestDefinitions", testDefinitionsDictionary.Values);
+        var testEntriesSection = new XElement("TestEntries", testEntriesDictionary.Values);
         
-        // Add the testResultsSection to the mergedDocument
+        // Add the componetns to the mergedDocument
         mergedDocument.Root.Add(testResultsSection);
+        mergedDocument.Root.Add(testDefinitionSection);
+        mergedDocument.Root.Add(testEntriesSection);
         mergedDocument.Root.Add(CreateOutcome(outcomeDictionary));
     }
 
@@ -100,4 +112,10 @@ public class TrxFetcher : ITrxFetcher
         
         return resultSummaryElement;
     }
+
+    private XElement GetTestDefinition(IEnumerable<XElement> definitions, string testId)
+        => definitions.SingleOrDefault(entry => entry.Attribute("id")!.Value.Equals(testId))!;
+
+    private XElement GetTestEntry(IEnumerable<XElement> entries, string testId)
+        => entries.SingleOrDefault(entry => entry.Attribute("testId")!.Value.Equals(testId))!;
 }

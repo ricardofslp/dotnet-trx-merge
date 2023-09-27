@@ -18,7 +18,7 @@ public class MergeCommandTests
     private const string Directory = "../../../Fixtures/";
 
     [Fact]
-    public async Task Run_TestsOnce_WithFile_NoFailures()
+    public void Run_TestsOnce_WithFile_NoFailures()
     {
         // Arrange
         var logger = new Logger();
@@ -36,7 +36,7 @@ public class MergeCommandTests
     }
     
     [Fact]
-    public async Task Run_TestsOnce_WithDirectory_NoFailures()
+    public void Run_TestsOnce_WithDirectory_NoFailures()
     {
         // Arrange
         var logger = new Logger();
