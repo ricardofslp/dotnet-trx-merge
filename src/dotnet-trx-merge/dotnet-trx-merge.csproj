@@ -14,7 +14,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <Version>1.1.0</Version>
+        <Version>1.1.1</Version>
         <PackageProjectUrl>https://github.com/ricardofslp/dotnet-trx-merge</PackageProjectUrl>
         <Description>Allow the merge of several trx files in a single one</Description>
         <RepositoryUrl>https://github.com/ricardofslp/dotnet-trx-merge</RepositoryUrl>
