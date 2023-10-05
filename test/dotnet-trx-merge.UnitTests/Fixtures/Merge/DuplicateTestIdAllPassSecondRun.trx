@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ac62796d-afd7-40db-a5a2-14798d6881bb" name="Utilizador@COMPUTER 2023-10-04 22:34:05" runUser="COMPUTER\Utilizador">
+	<Times creation="2023-10-04T22:34:05.8049079+01:00" queuing="2023-10-04T22:34:05.8049080+01:00" start="2023-10-04T22:34:03.5372794+01:00" finish="2023-10-04T22:34:07.0424314+01:00" />
+	<TestSettings name="default" id="0eb0170f-3da7-4844-8200-03dd206dee19">
+		<Deployment runDeploymentRoot="Utilizador_COMPUTER_2023-10-04_21_34_05" />
+	</TestSettings>
+	<Results>
+		<UnitTestResult executionId="ac62796d-afd7-40db-a5a2-14798d688131" testId="bd0f3e87-2d49-7223-2c00-e0924f9c83f5" testName="Test1" computerName="COMPUTER" duration="00:00:00.0003582" startTime="2023-10-04T22:34:06.6528109+01:00" endTime="2023-10-04T22:34:06.7133360+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ac62796d-afd7-40db-a5a2-14798d68813f" />
+		<UnitTestResult executionId="0213c00a-c8f7-4787-a5a0-179d076d5c81" testId="bd0f3e87-2d49-7223-2c00-e0924f9c83f5" testName="Test2" computerName="COMPUTER" duration="00:00:00.0002992" startTime="2023-10-04T22:34:06.6528109+01:00" endTime="2023-10-04T22:34:06.7133360+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0213c00a-c8f7-4787-a5a0-179d076d5c85" />
+		<UnitTestResult executionId="f72ee21c-4b63-4e22-b839-444caab919c1" testId="bd0f3e87-2d49-7223-2c00-e0924f9c83f5" testName="Test3" computerName="COMPUTER" duration="00:00:00.0003500" startTime="2023-10-04T22:34:06.6528109+01:00" endTime="2023-10-04T22:34:06.7133360+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f72ee21c-4b63-4e22-b839-444caab919cd" />
+	</Results>
+	<TestDefinitions>
+		<UnitTest name="ShouldCheckoutEachScenarioSuccessfully" storage="c:\some.dll" id="bd0f3e87-2d49-7223-2c00-e0924f9c83f5">
+			<TestCategory>
+				<TestCategoryItem TestCategory="Interesting" />
+			</TestCategory>
+			<Execution id="ac62796d-afd7-40db-a5a2-14798d68813f" />
+			<TestMethod codeBase="c:\some.dll" adapterTypeName="executor://mstestadapter/v2" className="DuplicateIdTests" name="ShouldCheckoutEachScenarioSuccessfully" />
+		</UnitTest>
+	</TestDefinitions>
+	<TestEntries>
+		<TestEntry testId="bd0f3e87-2d49-7223-2c00-e0924f9c83f5" executionId="ac62796d-afd7-40db-a5a2-14798d688131" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+		<TestEntry testId="bd0f3e87-2d49-7223-2c00-e0924f9c83f5" executionId="0213c00a-c8f7-4787-a5a0-179d076d5c81" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+		<TestEntry testId="bd0f3e87-2d49-7223-2c00-e0924f9c83f5" executionId="f72ee21c-4b63-4e22-b839-444caab919c1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+	</TestEntries>
+	<TestLists>
+		<TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+		<TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+	</TestLists>
+	<ResultSummary outcome="Completed">
+		<Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+	</ResultSummary>
+</TestRun>
