@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using dotnet_trx_merge.Domain;
 using dotnet_trx_merge.Logging;
 
 namespace dotnet_trx_merge.Services;
@@ -24,18 +25,8 @@ public class TrxFetcher : ITrxFetcher
         foreach (var trxFile in filesToMerge)
         {
             var trxDocument = XDocument.Load(trxFile);
-                        
-            // Strip namespaces from the document; if we don't do this, and the input .trx files have namespaces, no descendants will be found
-            // and an empty output file will be generated.
-            // https://stackoverflow.com/a/14865785/84898
-            foreach (var xe in trxDocument.Elements().DescendantsAndSelf())
-            {
-                // Stripping the namespace by setting the name of the element to its localname only
-                xe.Name = xe.Name.LocalName;
-                // replacing all attributes with attributes that are not namespaces and their names are set to only the localname
-                xe.ReplaceAttributes((from xattrib in xe.Attributes().Where(xa => !xa.IsNamespaceDeclaration) select new XAttribute(xattrib.Name.LocalName, xattrib.Value)));
-            }
-            
+            StripNamespaces(trxDocument);
+
             var results = trxDocument.Descendants("UnitTestResult");
             var definitions = trxDocument.Descendants("UnitTest");
             var entries = trxDocument.Descendants("TestEntry");
@@ -130,4 +121,18 @@ public class TrxFetcher : ITrxFetcher
 
     private XElement GetTestEntry(IEnumerable<XElement> entries, TestEntry testEntryId)
         => entries.SingleOrDefault(entry => new TestEntry(entry.Attribute("testId")!.Value, entry.Attribute("executionId")!.Value).Equals(testEntryId))!;
+
+    private void StripNamespaces(XDocument trxDocument)
+    {    
+        // Strip namespaces from the document; if we don't do this, and the input .trx files have namespaces, no descendants will be found
+        // and an empty output file will be generated.
+        // https://stackoverflow.com/a/14865785/84898
+        foreach (var xe in trxDocument.Elements().DescendantsAndSelf())
+        {
+            // Stripping the namespace by setting the name of the element to its localname only
+            xe.Name = xe.Name.LocalName;
+            // replacing all attributes with attributes that are not namespaces and their names are set to only the localname
+            xe.ReplaceAttributes((from xattrib in xe.Attributes().Where(xa => !xa.IsNamespaceDeclaration) select new XAttribute(xattrib.Name.LocalName, xattrib.Value)));
+        }
+    }
 }
