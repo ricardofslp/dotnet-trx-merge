@@ -29,12 +29,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Enum" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Include="..\..\CHANGELOG.md">
         <Link>CHANGELOG.md</Link>
+      </Content>
+      <Content Include="..\..\README.md">
+        <Link>README.md</Link>
+      </Content>
+      <Content Include="..\..\RELEASE.md">
+        <Link>RELEASE.md</Link>
       </Content>
       <None Include="../../README.md" Pack="true" PackagePath="/">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>

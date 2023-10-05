@@ -114,23 +114,24 @@ public class DotNetTrxMergeTests
     }
 
     [Fact]
-    public async Task DotnetTrxMerge_WithMultipleFilesFromOurTestRun()
+    public async Task DotnetTrxMerge_MergeWithDuplicatedIds_Success()
     {
         // Arrange
         Environment.ExitCode = 0;
-        var outputFile = $"{_dir}/MergeWithMyFiles/mergeDocument.trx";
+        var outputFile = $"{_dir}/MergeDuplicatedIds/mergeDocument.trx";
 
         // Act
-        var _ = RunDotNetTestRerunAndCollectOutputMessage("MergeWithRecursiveOption",
-            $"-d {_dir}/MergeWithMyFiles/ -r -o {outputFile}");
+        var _ = RunDotNetTestRerunAndCollectOutputMessage("MergeDuplicatedIds",
+            $"-d {_dir}/MergeDuplicatedIds/ -r -o {outputFile}");
 
         // Assert
         Environment.ExitCode.Should().Be(0);
         File.Exists(outputFile).Should().BeTrue();
         var text = await File.ReadAllTextAsync(outputFile);
-        text.Should().Contain("<Counters total=\"1\" passed=\"1\" failed=\"0\" />");
+        text.Should().Contain("<Counters total=\"2\" passed=\"2\" failed=\"0\" />");
         text.Should().Contain("testId=\"86e2b6e4-df7a-e4fa-006e-c056c908e219\"");
         text.Should().Contain("testName=\"SecondSimpleNumberCompare\"");
+        text.Should().Contain("testName=\"SimpleNumberCompare\"");
     }
 
 

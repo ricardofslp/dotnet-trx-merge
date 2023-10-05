@@ -10,6 +10,8 @@ public class TrxFetcherTests
 {
     private const string TrxAllPass = "../../../Fixtures/Merge/TrxAllPass.trx";
     private const string TrxWithFailures = "../../../Fixtures/Merge/TrxWithFailures.trx";
+    private const string TrxWithErrors = "../../../Fixtures/Merge/TrxWithErrors.trx";
+    private const string TrxWithPendings = "../../../Fixtures/Merge/TrxWithPendings.trx";
     private const string TrxAllPassSecondRun = "../../../Fixtures/Merge/TrxAllPassSecondRun.trx";
     private const string TrxDuplicateTestIdAllPass = "../../../Fixtures/Merge/TrxDuplicateTestIdAllPass.trx";
     private const string TrxDuplicateTestIdWithFailures = "../../../Fixtures/Merge/TrxDuplicateTestIdWithFailures.trx";
@@ -521,6 +523,108 @@ public class TrxFetcherTests
 
         ValidateOutcome(mergedDocument, 3, 2, 1, "Failed");
     }
+    
+    [Fact]
+    public void AddLatestTests_WithOneFile_SomeErrors()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+        var mergedDocument = new XDocument(new XElement("TestRun"));
+
+        // Act
+        trxFetcher.AddLatestTests(mergedDocument, new []{TrxWithErrors});
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(2);
+        ValidateTestResult(results.ElementAt(0), 
+            "0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare", 
+            "Error");
+        
+        ValidateTestResult(results.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare", 
+            "Passed");
+        
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(2);
+        ValidateTestDefinition(definitions.ElementAt(0), 
+            "0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare");
+        
+        ValidateTestDefinition(definitions.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare");
+        
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(2);
+        ValidateTestEntry(entries.ElementAt(0), 
+            "0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+        
+        ValidateTestEntry(entries.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6");
+        
+        ValidateOutcome(mergedDocument, 2, 1, 0, "Error", 1);
+    }
+    
+    [Fact]
+    public void AddLatestTests_WithOneFile_SomePendings()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+        var mergedDocument = new XDocument(new XElement("TestRun"));
+
+        // Act
+        trxFetcher.AddLatestTests(mergedDocument, new []{TrxWithPendings});
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(2);
+        ValidateTestResult(results.ElementAt(0), 
+            "0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare", 
+            "Pending");
+        
+        ValidateTestResult(results.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare", 
+            "Passed");
+        
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(2);
+        ValidateTestDefinition(definitions.ElementAt(0), 
+            "0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare");
+        
+        ValidateTestDefinition(definitions.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare");
+        
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(2);
+        ValidateTestEntry(entries.ElementAt(0), 
+            "0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+        
+        ValidateTestEntry(entries.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6");
+        
+        ValidateOutcome(mergedDocument, 2, 1, 0, "InProgress", pending: 1);
+    }
 
     private static void ValidateTestResult(XElement testResult,
         string executionId, 
@@ -558,7 +662,9 @@ public class TrxFetcherTests
         int total, 
         int passed, 
         int failed, 
-        string outcome)
+        string outcome,
+        int? error = null,
+        int? pending = null)
     {
         var results = testResult.Descendants("ResultSummary").ElementAt(0);
         results.Attribute("outcome")!.Value.Should().Be(outcome);
@@ -567,5 +673,11 @@ public class TrxFetcherTests
         counters.Attribute("total")!.Value.Should().Be(total.ToString());
         counters.Attribute("passed")!.Value.Should().Be(passed.ToString());
         counters.Attribute("failed")!.Value.Should().Be(failed.ToString());
+        
+        if(error.HasValue)
+            counters.Attribute("error")!.Value.Should().Be(error.ToString());
+        
+        if(pending.HasValue)
+            counters.Attribute("pending")!.Value.Should().Be(pending.ToString());
     }
 }

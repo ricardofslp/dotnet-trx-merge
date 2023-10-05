@@ -34,8 +34,4 @@
       <ProjectReference Include="..\dotnet-trx-merge.Common\dotnet-trx-merge.Common.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Fixtures\MergeWithMyFiles\" />
-    </ItemGroup>
-
 </Project>
