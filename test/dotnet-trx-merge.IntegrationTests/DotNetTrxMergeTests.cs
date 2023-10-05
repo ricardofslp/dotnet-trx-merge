@@ -40,7 +40,7 @@ public class DotNetTrxMergeTests
         output.Should().Contain("Found 2 files to merge");
         output.Should().Contain("Found 1 tests in file");
         output.Should().Contain("Found 2 tests in file");
-        output.Should().Contain("New result of test 3dacbae9-707e-1881-d63c-3573123dffc6 was found in file ");
+        output.Should().Contain("New result of test 3dacbae9-707e-1881-d63c-3573123dffc6 - 631e6252-66d2-49b8-9fb3-6b9fc02425db was found in file ");
     }
 
     [Fact]
@@ -112,8 +112,28 @@ public class DotNetTrxMergeTests
         text.Should().Contain("testId=\"86e2b6e4-df7a-e4fa-006e-c056c908e219\"");
         text.Should().Contain("testName=\"SecondSimpleNumberCompare\"");
     }
-    
-    
+
+    [Fact]
+    public async Task DotnetTrxMerge_WithMultipleFilesFromOurTestRun()
+    {
+        // Arrange
+        Environment.ExitCode = 0;
+        var outputFile = $"{_dir}/MergeWithMyFiles/mergeDocument.trx";
+
+        // Act
+        var _ = RunDotNetTestRerunAndCollectOutputMessage("MergeWithRecursiveOption",
+            $"-d {_dir}/MergeWithMyFiles/ -r -o {outputFile}");
+
+        // Assert
+        Environment.ExitCode.Should().Be(0);
+        File.Exists(outputFile).Should().BeTrue();
+        var text = await File.ReadAllTextAsync(outputFile);
+        text.Should().Contain("<Counters total=\"1\" passed=\"1\" failed=\"0\" />");
+        text.Should().Contain("testId=\"86e2b6e4-df7a-e4fa-006e-c056c908e219\"");
+        text.Should().Contain("testName=\"SecondSimpleNumberCompare\"");
+    }
+
+
     private string RunDotNetTestRerunAndCollectOutputMessage(string proj, string args = "")
     {
         var stringWriter = new StringWriter();
