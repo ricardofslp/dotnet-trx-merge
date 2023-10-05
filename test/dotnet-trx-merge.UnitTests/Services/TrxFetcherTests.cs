@@ -1,6 +1,4 @@
 ﻿using System.Xml.Linq;
-using dotnet_trx_merge.Commands;
-using dotnet_trx_merge.Commands.Configurations;
 using dotnet_trx_merge.Logging;
 using dotnet_trx_merge.Services;
 using FluentAssertions;
@@ -10,12 +8,14 @@ namespace dotnet_test_rerun.UnitTests.Services;
 
 public class TrxFetcherTests
 {
-    private const string FirstFilePath = "../../../Fixtures/Merge/TrxAllPass.trx";
-    private const string SecondFilePath = "../../../Fixtures/Merge/TrxWithFailures.trx";
-    private const string ThirdFilePath = "../../../Fixtures/Merge/TrxAllPassSecondRun.trx";
-    private const string FirstDuplicateFilePath = "../../../Fixtures/Merge/DuplicateTestIdAllPass.trx";
-    private const string SecondDuplicateFilePath = "../../../Fixtures/Merge/TrxWithFailures.trx";
-    private const string ThirdDupliacteFilePath = "../../../Fixtures/Merge/DuplicateTestIdAllPassSecondRun.trx";
+    private const string TrxAllPass = "../../../Fixtures/Merge/TrxAllPass.trx";
+    private const string TrxWithFailures = "../../../Fixtures/Merge/TrxWithFailures.trx";
+    private const string TrxAllPassSecondRun = "../../../Fixtures/Merge/TrxAllPassSecondRun.trx";
+    private const string TrxDuplicateTestIdAllPass = "../../../Fixtures/Merge/TrxDuplicateTestIdAllPass.trx";
+    private const string TrxDuplicateTestIdWithFailures = "../../../Fixtures/Merge/TrxDuplicateTestIdWithFailures.trx";
+    private const string TrxDuplicateTestIdAllPassSecondRun = "../../../Fixtures/Merge/TrxDuplicateTestIdAllPassSecondRun.trx";
+    private const string TrxDuplicateTestIdSecondRunStillFails = "../../../Fixtures/Merge/TrxDuplicateTestIdSecondRunStillFails.trx";
+    private const string TrxDuplicateTestIdSecondRunNewFailures = "../../../Fixtures/Merge/TrxDuplicateTestIdSecondRunNewFailures.trx";
 
     [Fact]
     public void AddLatestTests_WithOneFile_AllPass()
@@ -26,7 +26,7 @@ public class TrxFetcherTests
         var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{FirstFilePath});
+        trxFetcher.AddLatestTests(mergedDocument, new []{TrxAllPass});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -62,7 +62,7 @@ public class TrxFetcherTests
         var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{SecondFilePath});
+        trxFetcher.AddLatestTests(mergedDocument, new []{TrxWithFailures});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -113,7 +113,7 @@ public class TrxFetcherTests
         var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{FirstFilePath, SecondFilePath});
+        trxFetcher.AddLatestTests(mergedDocument, new []{TrxAllPass, TrxWithFailures});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -164,7 +164,7 @@ public class TrxFetcherTests
         var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{SecondFilePath, FirstFilePath});
+        trxFetcher.AddLatestTests(mergedDocument, new []{TrxWithFailures, TrxAllPass});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -215,7 +215,7 @@ public class TrxFetcherTests
         var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{FirstFilePath, ThirdFilePath});
+        trxFetcher.AddLatestTests(mergedDocument, new []{TrxAllPass, TrxAllPassSecondRun});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -251,7 +251,7 @@ public class TrxFetcherTests
         var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new[] { FirstDuplicateFilePath });
+        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdAllPass });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -307,7 +307,7 @@ public class TrxFetcherTests
         var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new[] { FirstDuplicateFilePath, ThirdDupliacteFilePath });
+        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdAllPass, TrxDuplicateTestIdAllPassSecondRun });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -352,6 +352,174 @@ public class TrxFetcherTests
             "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
 
         ValidateOutcome(mergedDocument, 3, 3, 0, "Completed");
+    }
+
+    [Fact]
+    public void AddLatestTests_WithMultipleTestsWithSameId_ShouldUpdateTheFailuresToSuccess()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+        var mergedDocument = new XDocument(new XElement("TestRun"));
+
+        // Act
+        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdAllPassSecondRun });
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(3);
+        ValidateTestResult(results.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d688131",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test1",
+            "Passed");
+
+        ValidateTestResult(results.ElementAt(1),
+            "0213c00a-c8f7-4787-a5a0-179d076d5c81",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test2",
+            "Passed");
+
+        ValidateTestResult(results.ElementAt(2),
+            "f72ee21c-4b63-4e22-b839-444caab919c1",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test3",
+            "Passed");
+
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(1);
+        ValidateTestDefinition(definitions.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d68813f",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "ShouldCheckoutEachScenarioSuccessfully");
+
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(3);
+        ValidateTestEntry(entries.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d688131",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateTestEntry(entries.ElementAt(1),
+            "0213c00a-c8f7-4787-a5a0-179d076d5c81",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateTestEntry(entries.ElementAt(2),
+            "f72ee21c-4b63-4e22-b839-444caab919c1",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateOutcome(mergedDocument, 3, 3, 0, "Completed");
+    }
+
+    [Fact]
+    public void AddLatestTests_WithMultipleTestsWithSameId_ShouldKeepAnyFailures()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+        var mergedDocument = new XDocument(new XElement("TestRun"));
+
+        // Act
+        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdSecondRunStillFails });
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(3);
+        ValidateTestResult(results.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d688131",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test1",
+            "Passed");
+
+        ValidateTestResult(results.ElementAt(1),
+            "0213c00a-c8f7-4787-a5a0-179d076d5c81",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test2",
+            "Failed");
+
+        ValidateTestResult(results.ElementAt(2),
+            "f72ee21c-4b63-4e22-b839-444caab919c1",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test3",
+            "Passed");
+
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(1);
+        ValidateTestDefinition(definitions.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d68813f",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "ShouldCheckoutEachScenarioSuccessfully");
+
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(3);
+        ValidateTestEntry(entries.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d688131",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateTestEntry(entries.ElementAt(1),
+            "0213c00a-c8f7-4787-a5a0-179d076d5c81",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateTestEntry(entries.ElementAt(2),
+            "f72ee21c-4b63-4e22-b839-444caab919c1",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateOutcome(mergedDocument, 3, 2, 1, "Failed");
+    }
+
+    [Fact]
+    public void AddLatestTests_WithMultipleTestsWithSameId_ShouldUpdateWithNewFailures()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+        var mergedDocument = new XDocument(new XElement("TestRun"));
+
+        // Act
+        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdSecondRunNewFailures });
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(3);
+        ValidateTestResult(results.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d688131",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test1",
+            "Passed");
+
+        ValidateTestResult(results.ElementAt(1),
+            "0213c00a-c8f7-4787-a5a0-179d076d5c81",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test2",
+            "Passed");
+
+        ValidateTestResult(results.ElementAt(2),
+            "f72ee21c-4b63-4e22-b839-444caab919c1",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "Test3",
+            "Failed");
+
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(1);
+        ValidateTestDefinition(definitions.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d68813f",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5",
+            "ShouldCheckoutEachScenarioSuccessfully");
+
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(3);
+        ValidateTestEntry(entries.ElementAt(0),
+            "ac62796d-afd7-40db-a5a2-14798d688131",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateTestEntry(entries.ElementAt(1),
+            "0213c00a-c8f7-4787-a5a0-179d076d5c81",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateTestEntry(entries.ElementAt(2),
+            "f72ee21c-4b63-4e22-b839-444caab919c1",
+            "bd0f3e87-2d49-7223-2c00-e0924f9c83f5");
+
+        ValidateOutcome(mergedDocument, 3, 2, 1, "Failed");
     }
 
     private static void ValidateTestResult(XElement testResult,
