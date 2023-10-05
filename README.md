@@ -32,7 +32,7 @@ trx-merge [OPTIONS]
 
 - Github: [@ricardofslp](https://github.com/ricardofslp)
 
-👥 **Contributors**
+👥 **Main Contributors**
 
 - Github: [@joaoopereira](https://github.com/joaoopereira)
 
