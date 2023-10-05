@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.2.0-alpha.0"></a>
+## [1.2.0-alpha.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.2.0-alpha.0) (2023-10-5)
+
+### Features
+
+* deal with duplicated test ids in trx files ([e0433bf](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/e0433bfac35ef43fcacbb1f278157d1512b2dbce))
+
 <a name="1.2.0"></a>
 ## [1.2.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.2.0) (2023-10-2)
 
