@@ -13,23 +13,32 @@ public class TrxFetcher : ITrxFetcher
         _log = logger;
     }
 
-    public void AddLatestTests(XDocument mergedDocument, string[] filesToMerge)
-        => FetchOnlyLatest(mergedDocument, filesToMerge);
+    public XDocument AddLatestTests(string[] filesToMerge)
+        => FetchOnlyLatest(filesToMerge);
 
-    private void FetchOnlyLatest(XDocument mergedDocument, string[] filesToMerge)
-    {
+    private XDocument FetchOnlyLatest(string[] filesToMerge)
+    {   
+        string creation;
+        string queued;
+        string start;
+        string end;
         var testResultDictionary = new Dictionary<TestIdentity, XElement>();
         var testDefinitionsDictionary = new Dictionary<string, XElement>();
         var testEntriesDictionary = new Dictionary<TestIdentity, XElement>();
         var outcomeDictionary = new Dictionary<string, int>();
+        XNamespace ns = "";
+        TestTimes testTimes = new TestTimes();
         foreach (var trxFile in filesToMerge)
         {
             var trxDocument = XDocument.Load(trxFile);
-            StripNamespaces(trxDocument);
-
-            var results = trxDocument.Descendants("UnitTestResult");
-            var definitions = trxDocument.Descendants("UnitTest");
-            var entries = trxDocument.Descendants("TestEntry");
+            XElement? rootElement = trxDocument.Root;
+            if (rootElement == null)
+                throw new Exception($"Could not find root element in file {trxFile}");
+            ns = rootElement.GetDefaultNamespace();
+            testTimes.AddTestTimes(rootElement.Descendants(ns+"Times").FirstOrDefault());
+            var results = trxDocument.Descendants(ns + "UnitTestResult");
+            var definitions = trxDocument.Descendants(ns + "UnitTest");
+            var entries = trxDocument.Descendants(ns + "TestEntry");
             _log.Debug($"Found {results?.Count()} tests in file {trxFile}");
             foreach (var unitTestResult in results)
             {
@@ -59,12 +68,17 @@ public class TrxFetcher : ITrxFetcher
         var testResultsSection = new XElement("Results", testResultDictionary.Values);
         var testDefinitionSection = new XElement("TestDefinitions", testDefinitionsDictionary.Values);
         var testEntriesSection = new XElement("TestEntries", testEntriesDictionary.Values);
-        
-        // Add the componetns to the mergedDocument
-        mergedDocument.Root.Add(testResultsSection);
+
+        // Add the components to the mergedDocument        
+        var mergedDocument = new XDocument(new XElement(ns + "TestRun"));
+        var times = new XElement(ns + "Times");
+        testTimes.SetTestTimes(times);
+        mergedDocument.Root!.Add(times);
+        mergedDocument.Root!.Add(testResultsSection);
         mergedDocument.Root.Add(testDefinitionSection);
         mergedDocument.Root.Add(testEntriesSection);
         mergedDocument.Root.Add(CreateOutcome(outcomeDictionary));
+        return mergedDocument;
     }
 
     private XElement CreateOutcome(Dictionary<string, int> outcomes)
@@ -121,18 +135,4 @@ public class TrxFetcher : ITrxFetcher
 
     private XElement GetTestEntry(IEnumerable<XElement> entries, TestEntry testEntryId)
         => entries.SingleOrDefault(entry => new TestEntry(entry.Attribute("testId")!.Value, entry.Attribute("executionId")!.Value).Equals(testEntryId))!;
-
-    private void StripNamespaces(XDocument trxDocument)
-    {    
-        // Strip namespaces from the document; if we don't do this, and the input .trx files have namespaces, no descendants will be found
-        // and an empty output file will be generated.
-        // https://stackoverflow.com/a/14865785/84898
-        foreach (var xe in trxDocument.Elements().DescendantsAndSelf())
-        {
-            // Stripping the namespace by setting the name of the element to its localname only
-            xe.Name = xe.Name.LocalName;
-            // replacing all attributes with attributes that are not namespaces and their names are set to only the localname
-            xe.ReplaceAttributes((from xattrib in xe.Attributes().Where(xa => !xa.IsNamespaceDeclaration) select new XAttribute(xattrib.Name.LocalName, xattrib.Value)));
-        }
-    }
 }

@@ -2,6 +2,7 @@
 using dotnet_trx_merge.Logging;
 using dotnet_trx_merge.Services;
 using FluentAssertions;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Xunit;
 
 namespace dotnet_test_rerun.UnitTests.Services;
@@ -13,6 +14,8 @@ public class TrxFetcherTests
     private const string TrxWithErrors = "../../../Fixtures/Merge/TrxWithErrors.trx";
     private const string TrxWithPendings = "../../../Fixtures/Merge/TrxWithPendings.trx";
     private const string TrxAllPassSecondRun = "../../../Fixtures/Merge/TrxAllPassSecondRun.trx";
+    private const string TrxWithNamespaceAllPass = "../../../Fixtures/Merge/TrxWithNamespaceAllPass.trx";
+    private const string TrxWithNamespaceWithFailures = "../../../Fixtures/Merge/TrxWithNamespaceWithFailures.trx";
     private const string TrxDuplicateTestIdAllPass = "../../../Fixtures/Merge/TrxDuplicateTestIdAllPass.trx";
     private const string TrxDuplicateTestIdWithFailures = "../../../Fixtures/Merge/TrxDuplicateTestIdWithFailures.trx";
     private const string TrxDuplicateTestIdAllPassSecondRun = "../../../Fixtures/Merge/TrxDuplicateTestIdAllPassSecondRun.trx";
@@ -25,10 +28,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{TrxAllPass});
+        var mergedDocument =  trxFetcher.AddLatestTests(new []{TrxAllPass});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -53,6 +55,11 @@ public class TrxFetcherTests
             "86e2b6e4-df7a-e4fa-006e-c056c908e219");
         
         ValidateOutcome(mergedDocument, 1, 1, 0, "Completed");
+        ValidateTimes(mergedDocument.Descendants("Times").First(), 
+            "2023-08-29T18:35:26.3589967+01:00", 
+            "2023-08-29T18:35:26.3589971+01:00", 
+            "2023-08-29T18:35:25.5259659+01:00", 
+            "2023-08-29T18:35:26.3652254+01:00");
     }
     
     [Fact]
@@ -61,10 +68,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{TrxWithFailures});
+        var mergedDocument = trxFetcher.AddLatestTests(new []{TrxWithFailures});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -104,6 +110,11 @@ public class TrxFetcherTests
             "3dacbae9-707e-1881-d63c-3573123dffc6");
         
         ValidateOutcome(mergedDocument, 2, 1, 1, "Failed");
+        ValidateTimes(mergedDocument.Descendants("Times").First(),
+            "2023-08-29T18:35:23.4708736+01:00",
+            "2023-08-29T18:35:23.4708738+01:00",
+            "2023-08-29T18:35:22.2327044+01:00",
+            "2023-08-29T18:35:23.4786615+01:00");
     }
     
     [Fact]
@@ -112,10 +123,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{TrxAllPass, TrxWithFailures});
+        var mergedDocument = trxFetcher.AddLatestTests(new []{TrxAllPass, TrxWithFailures});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -155,6 +165,11 @@ public class TrxFetcherTests
             "3dacbae9-707e-1881-d63c-3573123dffc6");
         
         ValidateOutcome(mergedDocument, 2, 2, 0, "Completed");
+        ValidateTimes(mergedDocument.Descendants("Times").First(),
+            "2023-08-29T18:35:23.4708736+01:00",
+            "2023-08-29T18:35:23.4708738+01:00",
+            "2023-08-29T18:35:22.2327044+01:00",
+            "2023-08-29T18:35:26.3652254+01:00");
     }
     
     [Fact]
@@ -163,10 +178,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{TrxWithFailures, TrxAllPass});
+        var mergedDocument = trxFetcher.AddLatestTests(new []{TrxWithFailures, TrxAllPass});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -214,10 +228,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{TrxAllPass, TrxAllPassSecondRun});
+        var mergedDocument = trxFetcher.AddLatestTests(new []{TrxAllPass, TrxAllPassSecondRun});
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -250,10 +263,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdAllPass });
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxDuplicateTestIdAllPass });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -306,10 +318,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
 
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdAllPass, TrxDuplicateTestIdAllPassSecondRun });
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxDuplicateTestIdAllPass, TrxDuplicateTestIdAllPassSecondRun });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -362,10 +373,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdAllPassSecondRun });
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdAllPassSecondRun });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -418,10 +428,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdSecondRunStillFails });
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdSecondRunStillFails });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -474,10 +483,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdSecondRunNewFailures });
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxDuplicateTestIdWithFailures, TrxDuplicateTestIdSecondRunNewFailures });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -530,10 +538,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{TrxWithErrors});
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxWithErrors });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -581,10 +588,9 @@ public class TrxFetcherTests
         // Arrange
         var logger = new Logger();
         var trxFetcher = new TrxFetcher(logger);
-        var mergedDocument = new XDocument(new XElement("TestRun"));
-
+        
         // Act
-        trxFetcher.AddLatestTests(mergedDocument, new []{TrxWithPendings});
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxWithPendings });
 
         // Assert
         var results = mergedDocument.Descendants("UnitTestResult");
@@ -626,6 +632,73 @@ public class TrxFetcherTests
         ValidateOutcome(mergedDocument, 2, 1, 0, "InProgress", pending: 1);
     }
 
+    [Fact]
+    public void AddLatestTests_WhenNamespaces_OutputShouldHaveNamespace()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxWithNamespaceWithFailures, TrxWithNamespaceAllPass });
+        XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+
+        // Assert
+        ValidateTimes(mergedDocument.Descendants(ns + "Times").First(),
+            "2023-08-29T18:35:23.4708736+01:00", 
+            "2023-08-29T18:35:23.4708738+01:00", 
+            "2023-08-29T18:35:22.2327044+01:00", 
+            "2023-08-29T19:35:26.3652254+01:00");
+
+        var results = mergedDocument.Descendants(ns + "UnitTestResult");
+        results.Should().HaveCount(2);
+        ValidateTestResult(results.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare", 
+            "Passed");
+        
+        ValidateTestResult(results.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare", 
+            "Passed");
+        
+        var definitions = mergedDocument.Descendants(ns + "UnitTest");
+        definitions.Should().HaveCount(2);
+        ValidateTestDefinition(definitions.ElementAt(0),
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219", 
+            "SecondSimpleNumberCompare",
+            ns);
+        
+        ValidateTestDefinition(definitions.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6", 
+            "SimpleNumberCompare",
+            ns);
+        
+        var entries = mergedDocument.Descendants(ns + "TestEntry");
+        entries.Should().HaveCount(2);
+        ValidateTestEntry(entries.ElementAt(0), 
+            "e68ff2c7-8309-483b-a1fd-414967943cf0", 
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+        
+        ValidateTestEntry(entries.ElementAt(1), 
+            "631e6252-66d2-49b8-9fb3-6b9fc02425db", 
+            "3dacbae9-707e-1881-d63c-3573123dffc6");
+        
+        ValidateOutcome(mergedDocument, 2, 2, 0, "Completed");
+    }
+
+    private void ValidateTimes(XElement times, string creation, string queued, string start, string finish)
+    {
+        times.Attribute("creation")!.Value.Should().Be(creation);
+        times.Attribute("queuing")!.Value.Should().Be(queued);
+        times.Attribute("start")!.Value.Should().Be(start);
+        times.Attribute("finish")!.Value.Should().Be(finish);
+    }
+
     private static void ValidateTestResult(XElement testResult,
         string executionId, 
         string testId, 
@@ -646,6 +719,19 @@ public class TrxFetcherTests
         testResult.Attribute("id")!.Value.Should().Be(testId);
         testResult.Attribute("name")!.Value.Should().Be(testName);
         var execution = testResult.Descendants("Execution");
+        execution.Should().HaveCount(1);
+        execution.ElementAt(0).Attribute("id")!.Value.Should().Be(executionId);
+    }
+
+    private static void ValidateTestDefinition(XElement testResult,
+        string executionId,
+        string testId,
+        string testName,
+        XNamespace ns)
+    {
+        testResult.Attribute("id")!.Value.Should().Be(testId);
+        testResult.Attribute("name")!.Value.Should().Be(testName);
+        var execution = testResult.Descendants(ns + "Execution");
         execution.Should().HaveCount(1);
         execution.ElementAt(0).Attribute("id")!.Value.Should().Be(executionId);
     }
