@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="45d16b23-3429-4c35-a706-7d543b8029eb" name="Utilizador@COMPUTER 2023-08-29 18:35:23" runUser="COMPUTER\Utilizador" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2023-08-29T18:35:23.4708736+01:00" queuing="2023-08-29T18:35:23.4708738+01:00" start="2023-08-29T18:35:22.2327044+01:00" finish="2023-08-29T18:35:23.4786615+01:00" />
+  <TestSettings name="default" id="a6558ae6-a0c5-4d02-8094-94a44af92a09">
+    <Deployment runDeploymentRoot="Utilizador_COMPUTER_2023-08-29_18_35_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d" testId="86e2b6e4-df7a-e4fa-006e-c056c908e219" testName="SecondSimpleNumberCompare" computerName="COMPUTER" duration="00:00:00.0422540" startTime="2023-08-29T18:35:23.3071066+01:00" endTime="2023-08-29T18:35:23.3493603+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d">
+      <Output>
+        <ErrorInfo>
+          <Message>  Expected: 2
+  But was:  3
+</Message>
+          <StackTrace>   at NUnitTestExample.Tests.SecondSimpleNumberCompare() in C:\Users\Utilizador\AppData\Local\Temp\F7EFE9C2\NUnitTestPassOnSecondRunExample\SimpleTest.cs:line 17
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="631e6252-66d2-49b8-9fb3-6b9fc02425db" testId="3dacbae9-707e-1881-d63c-3573123dffc6" testName="SimpleNumberCompare" computerName="COMPUTER" duration="00:00:00.0089110" startTime="2023-08-29T18:35:23.2967341+01:00" endTime="2023-08-29T18:35:23.3055563+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="631e6252-66d2-49b8-9fb3-6b9fc02425db" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="SimpleNumberCompare" storage="c:\users\utilizador\appdata\local\temp\f7efe9c2\nunittestpassonsecondrunexample\bin\debug\net6.0\nunittestpassonsecondrunexample.dll" id="3dacbae9-707e-1881-d63c-3573123dffc6">
+      <Execution id="631e6252-66d2-49b8-9fb3-6b9fc02425db" />
+      <TestMethod codeBase="C:\Users\Utilizador\AppData\Local\Temp\F7EFE9C2\NUnitTestPassOnSecondRunExample\bin\Debug\net6.0\NUnitTestPassOnSecondRunExample.dll" adapterTypeName="executor://nunit3testexecutor/" className="NUnitTestExample.Tests" name="SimpleNumberCompare" />
+    </UnitTest>
+    <UnitTest name="SecondSimpleNumberCompare" storage="c:\users\utilizador\appdata\local\temp\f7efe9c2\nunittestpassonsecondrunexample\bin\debug\net6.0\nunittestpassonsecondrunexample.dll" id="86e2b6e4-df7a-e4fa-006e-c056c908e219">
+      <Execution id="0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d" />
+      <TestMethod codeBase="C:\Users\Utilizador\AppData\Local\Temp\F7EFE9C2\NUnitTestPassOnSecondRunExample\bin\Debug\net6.0\NUnitTestPassOnSecondRunExample.dll" adapterTypeName="executor://nunit3testexecutor/" className="NUnitTestExample.Tests" name="SecondSimpleNumberCompare" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="86e2b6e4-df7a-e4fa-006e-c056c908e219" executionId="0dda3bb0-bcfb-4990-a4ac-bbd1ccf4cf8d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3dacbae9-707e-1881-d63c-3573123dffc6" executionId="631e6252-66d2-49b8-9fb3-6b9fc02425db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="1" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.2.0.0: Test execution started
+Running all tests in C:\Users\Utilizador\AppData\Local\Temp\F7EFE9C2\NUnitTestPassOnSecondRunExample\bin\Debug\net6.0\NUnitTestPassOnSecondRunExample.dll
+   NUnit3TestExecutor discovered 2 of 2 NUnit test cases using Current Discovery mode, Non-Explicit run
+NUnit Adapter 4.2.0.0: Test execution complete
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

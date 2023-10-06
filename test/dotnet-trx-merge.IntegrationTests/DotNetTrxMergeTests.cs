@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.IO.Abstractions;
+using System.Xml.Linq;
 using dotnet_test_rerun.IntegrationTests.Utilities;
 using dotnet_trx_merge.Commands;
 using dotnet_trx_merge.Commands.Configurations;
@@ -134,6 +135,29 @@ public class DotNetTrxMergeTests
         text.Should().Contain("testName=\"SimpleNumberCompare\"");
     }
 
+    [Fact]
+    public async Task DotnetTrxMerge_MergeWithFilesWithNamespaces_SuccessAndShouldIncludeNamespaces()
+    {
+        // Arrange
+        Environment.ExitCode = 0;
+        var outputFile = $"{_dir}/FilesWithNamespaces/mergeDocument.trx";
+
+        // Act
+        var _ = RunDotNetTestRerunAndCollectOutputMessage("MergeFilesWithNamespaces",
+            $"-d {_dir}/FilesWithNamespaces/ -r -o {outputFile}");
+
+        // Assert
+        Environment.ExitCode.Should().Be(0);
+        File.Exists(outputFile).Should().BeTrue();
+        var text = await File.ReadAllTextAsync(outputFile);
+        text.Should().Contain("<Counters total=\"2\" passed=\"2\" failed=\"0\" />");
+        text.Should().Contain("testId=\"86e2b6e4-df7a-e4fa-006e-c056c908e219\"");
+        text.Should().Contain("testName=\"SecondSimpleNumberCompare\"");
+        text.Should().Contain("testName=\"SimpleNumberCompare\"");
+        XDocument doc = XDocument.Load(outputFile);
+        var ns = doc.Root.GetDefaultNamespace();
+        ns.NamespaceName.Should().Be("http://microsoft.com/schemas/VisualStudio/TeamTest/2010");
+    }
 
     private string RunDotNetTestRerunAndCollectOutputMessage(string proj, string args = "")
     {
