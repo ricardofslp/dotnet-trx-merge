@@ -21,13 +21,13 @@ public class MergeCommandConfiguration
 
     private readonly Option<IEnumerable<string>> FilesOption = new(new[] { "--file", "-f" })
     {
-        Description = "Trx file to merge.",
+        Description = "Trx file to merge. Can be set several times. Cannot be used with --dir.",
         IsRequired = false
     };
     
     private readonly Option<string> DirectoryOption = new(new[] { "--dir", "-d" })
     {
-        Description = "Folder to look for trx files.",
+        Description = "Folder to look for trx files. Cannot be used with --file.",
         IsRequired = false,
         Arity = ArgumentArity.ZeroOrOne
     };
@@ -48,7 +48,7 @@ public class MergeCommandConfiguration
     private readonly Option<string> OutputPathOption =
         new(new[] { "--output", "-o" }, getDefaultValue: () => $"./mergedTrx_{DateTime.Now.ToFileTime()}.trx")
     {
-        Description = "Output file path.",
+        Description = "Output file path. Must include the file name, not just a directory.",
         IsRequired = false
     };
 
