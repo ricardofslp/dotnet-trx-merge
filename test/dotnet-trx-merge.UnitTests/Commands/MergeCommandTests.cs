@@ -25,14 +25,14 @@ public class MergeCommandTests
         var config = new MergeCommandConfiguration();
         InitialConfigurationSetup(config, $"-f {FirstFilePath} -f {SecondFilePath}");
         var trxFetcher = Substitute.For<ITrxFetcher>();
+        trxFetcher.AddLatestTests(Arg.Any<string[]>()).Returns(new XDocument(new XElement("TestRun")));
         var command = new MergeCommand(logger, config, trxFetcher);
 
         // Act
         command.Run();
 
         // Assert
-        trxFetcher.Received(1).AddLatestTests(Arg.Any<XDocument>(), 
-            Arg.Is<string[]>(files => files.Count() == 2));
+        trxFetcher.Received(1).AddLatestTests(Arg.Is<string[]>(files => files.Count() == 2));
     }
     
     [Fact]
@@ -43,14 +43,14 @@ public class MergeCommandTests
         var config = new MergeCommandConfiguration();
         InitialConfigurationSetup(config, $"-d {Directory} -r");
         var trxFetcher = Substitute.For<ITrxFetcher>();
+        trxFetcher.AddLatestTests(Arg.Any<string[]>()).Returns(new XDocument(new XElement("TestRun")));
         var command = new MergeCommand(logger, config, trxFetcher);
 
         // Act
         command.Run();
 
         // Assert
-        trxFetcher.Received(1).AddLatestTests(Arg.Any<XDocument>(), 
-            Arg.Is<string[]>(files => files.Count() == 10));
+        trxFetcher.Received(1).AddLatestTests(Arg.Is<string[]>(files => files.Count() == 12));
     }
     
     [Fact]
@@ -68,8 +68,7 @@ public class MergeCommandTests
         await command.InvokeAsync($"-f {FirstFilePath} -f {SecondFilePath}");
 
         // Assert
-        trxFetcher.Received(1).AddLatestTests(Arg.Any<XDocument>(), 
-            Arg.Is<string[]>(files => 
+        trxFetcher.Received(1).AddLatestTests(Arg.Is<string[]>(files => 
                 files.ElementAt(0).Equals(FirstFilePath) &&
                 files.ElementAt(1).Equals(SecondFilePath)));
     }

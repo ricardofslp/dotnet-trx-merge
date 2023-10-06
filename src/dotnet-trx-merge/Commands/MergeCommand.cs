@@ -37,10 +37,9 @@ public class MergeCommand : RootCommand
         var trxFiles = GetTrxFiles();
         _log.Debug($"Found {trxFiles.Length} files to merge");
 
-        var mergedDocument = new XDocument(new XElement("TestRun"));
         if (trxFiles.Length > 0)
         {
-            _trxFetcher.AddLatestTests(mergedDocument, trxFiles);
+            var mergedDocument = _trxFetcher.AddLatestTests(trxFiles);
 
             _log.Debug($"Document {_config.OutputPath} was saved");
             mergedDocument.Save(_config.OutputPath);

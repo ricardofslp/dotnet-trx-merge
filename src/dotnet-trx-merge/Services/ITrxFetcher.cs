@@ -4,5 +4,5 @@ namespace dotnet_trx_merge.Services;
 
 public interface ITrxFetcher
 {
-    public void AddLatestTests(XDocument mergedDocument, string[] filesToMerge);
+    public XDocument AddLatestTests(string[] filesToMerge);
 }
