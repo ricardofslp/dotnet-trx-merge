@@ -15,15 +15,15 @@ public class MergeCommandConfigurationTests
     private Command Command = new Command("trx-merge");
 
     [Theory]
-    [InlineData("--file", "Trx file to merge.", false)]
-    [InlineData("-f", "Trx file to merge.", false)]
-    [InlineData("--dir", "Folder to look for trx files.", false)]
-    [InlineData("-d", "Folder to look for trx files.", false)]
+    [InlineData("--file", "Trx file to merge. Can be set several times. Cannot be used with --dir.", false)]
+    [InlineData("-f", "Trx file to merge. Can be set several times. Cannot be used with --dir.", false)]
+    [InlineData("--dir", "Folder to look for trx files. Cannot be used with --file.", false)]
+    [InlineData("-d", "Folder to look for trx files. Cannot be used with --file.", false)]
     [InlineData("--loglevel", "Log Level", false)]
     [InlineData("--recursive", "Search recursively in folder.", false)]
     [InlineData("-r", "Search recursively in folder.", false)]
-    [InlineData("--output", "Output file path.", false)]
-    [InlineData("-o", "Output file path.", false)]
+    [InlineData("--output", "Output file path. Must include the file name, not just a directory.", false)]
+    [InlineData("-o", "Output file path. Must include the file name, not just a directory.", false)]
     public void RerunCommandConfiguration_Set_ShouldConfigureOptions(string optionName, string description, bool isRequired)
     {
         //Act
