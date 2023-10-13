@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.3.0"></a>
+## [1.3.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.3.0) (2023-10-13)
+
 <a name="1.3.0-alpha.0"></a>
 ## [1.3.0-alpha.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.3.0-alpha.0) (2023-10-6)
 
