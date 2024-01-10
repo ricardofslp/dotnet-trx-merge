@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.4.0-alpha.0"></a>
+## [1.4.0-alpha.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.4.0-alpha.0) (2023-12-16)
+
+### Features
+
+* add test run attributes to output ([edeecfc](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/edeecfcbe275ce420e6f7349258dacb03ffd3bfe))
+
 <a name="1.3.0"></a>
 ## [1.3.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.3.0) (2023-10-13)
 
