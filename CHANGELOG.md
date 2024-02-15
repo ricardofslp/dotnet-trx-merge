@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.4.0-alpha.1"></a>
+## [1.4.0-alpha.1](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.4.0-alpha.1) (2024-02-15)
+
+### Features
+
+* add option to define namespace of output ([f9628d5](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/f9628d5a11a3c1985161d9b712a1794bb88b6b94))
+
 <a name="1.4.0-alpha.0"></a>
 ## [1.4.0-alpha.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.4.0-alpha.0) (2023-12-16)
 
