@@ -184,5 +184,31 @@ public class DotNetTrxMergeTests
 
         return stringWriter.ToString().Trim();
     }
+    
+    
 
+    [Fact]
+    public async Task DotnetTrxMerge_MergeWithFilesGivingANamespace_SuccessAndShouldIncludeNamespaces()
+    {
+        // Arrange
+        Environment.ExitCode = 0;
+        var outputFile = $"{_dir}/FilesWithNamespaces/mergeDocument.trx";
+        var newNamespace = "http://newNamespace/"; 
+
+        // Act
+        var _ = RunDotNetTestRerunAndCollectOutputMessage("MergeFilesWithNamespaces",
+            $"-d {_dir}/FilesWithNamespaces/ -r -o {outputFile} -n {newNamespace}");
+
+        // Assert
+        Environment.ExitCode.Should().Be(0);
+        File.Exists(outputFile).Should().BeTrue();
+        var text = await File.ReadAllTextAsync(outputFile);
+        text.Should().Contain("<Counters total=\"2\" passed=\"2\" failed=\"0\" />");
+        text.Should().Contain("testId=\"86e2b6e4-df7a-e4fa-006e-c056c908e219\"");
+        text.Should().Contain("testName=\"SecondSimpleNumberCompare\"");
+        text.Should().Contain("testName=\"SimpleNumberCompare\"");
+        XDocument doc = XDocument.Load(outputFile);
+        var ns = doc.Root.GetDefaultNamespace();
+        ns.NamespaceName.Should().Be("http://newNamespace/");
+    }
 }
