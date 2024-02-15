@@ -1,6 +1,6 @@
 ﻿using System.CommandLine;
-using System.Xml.Linq;
 using dotnet_trx_merge.Commands.Configurations;
+using dotnet_trx_merge.Extensions;
 using dotnet_trx_merge.Logging;
 using dotnet_trx_merge.Services;
 
@@ -39,7 +39,8 @@ public class MergeCommand : RootCommand
 
         if (trxFiles.Length > 0)
         {
-            var mergedDocument = _trxFetcher.AddLatestTests(trxFiles);
+            var mergedDocument = _trxFetcher.AddLatestTests(trxFiles); 
+            mergedDocument.ReplaceAllNamespaces(_config.Namespace);
 
             _log.Debug($"Document {_config.OutputPath} was saved");
             mergedDocument.Save(_config.OutputPath);

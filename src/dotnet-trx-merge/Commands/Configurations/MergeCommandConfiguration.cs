@@ -13,6 +13,7 @@ public class MergeCommandConfiguration
     public LogLevel LogLevel { get; internal set; }
     public string Directory { get; internal set; }
     public bool Recursive { get; internal set; }
+    public string Namespace { get; internal set; }
     public string OutputPath { get; internal set; }
     
     #endregion Properties
@@ -44,6 +45,12 @@ public class MergeCommandConfiguration
         IsRequired = false,
         Arity = ArgumentArity.Zero
     };
+
+    private readonly Option<string> NamespaceOption = new(new[] { "--namespace", "-n" })
+    {
+        Description = "Namespace to add to output file.",
+        IsRequired = false
+    };
     
     private readonly Option<string> OutputPathOption =
         new(new[] { "--output", "-o" }, getDefaultValue: () => $"./mergedTrx_{DateTime.Now.ToFileTime()}.trx")
@@ -60,6 +67,7 @@ public class MergeCommandConfiguration
         cmd.Add(LogLevelOption);
         cmd.Add(DirectoryOption);
         cmd.Add(RecursiveOption);
+        cmd.Add(NamespaceOption);
         cmd.Add(OutputPathOption);
     }
 
@@ -69,6 +77,7 @@ public class MergeCommandConfiguration
         LogLevel = context.ParseResult.GetValueForOption(LogLevelOption);
         Directory = context.ParseResult.GetValueForOption(DirectoryOption)!;
         Recursive = context.ParseResult.FindResultFor(RecursiveOption) is not null;
+        Namespace = context.ParseResult.GetValueForOption(NamespaceOption)!;
         OutputPath = context.ParseResult.GetValueForOption(OutputPathOption)!;
         
         ValidateInput();

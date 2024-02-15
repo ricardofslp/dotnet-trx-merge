@@ -18,13 +18,14 @@ trx-merge [OPTIONS]
 
 
 ## Options
-| option               | description                                                                                                            |
-| -------------------- |------------------------------------------------------------------------------------------------------------------------|
-| `--file, -f`           | Trx file to merge. Can be set several times. Cannot be used with --dir.                                                                            |
-| `--dir, -d`     | Folder to look for trx files. Cannot be used with --file.                                                                       |
-| `--loglevel` | Log Level. *(default: Verbose)*                                                                                        |
+| option            | description                                                                                                            |
+|-------------------|------------------------------------------------------------------------------------------------------------------------|
+| `--file, -f`      | Trx file to merge. Can be set several times. Cannot be used with --dir.                                                                            |
+| `--dir, -d`       | Folder to look for trx files. Cannot be used with --file.                                                                       |
+| `--loglevel`      | Log Level. *(default: Verbose)*                                                                                        |
 | `--recursive, -r` | Search recursively in folder. Implies --dir is set.                                                         |
-| `--output, -o` | Output file path. Must include the file name, not just a directory.                                                                        |
+| `--namespace, -n` | Namespace to add to output file.                                                         |
+| `--output, -o`    | Output file path. Must include the file name, not just a directory.                                                                        |
 
 ## 👤 Author & Contributors
 

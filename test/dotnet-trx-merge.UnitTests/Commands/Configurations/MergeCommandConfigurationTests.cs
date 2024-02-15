@@ -41,7 +41,7 @@ public class MergeCommandConfigurationTests
     {
         //Arrange
         _configuration.Set(Command); 
-        var result = new Parser(Command).Parse("--file file1 --file file2 --output output --loglevel Debug");
+        var result = new Parser(Command).Parse("--file file1 --file file2 --output output --loglevel Debug --namespace http://test");
         var context = new InvocationContext(result);
 
         //Act
@@ -53,6 +53,7 @@ public class MergeCommandConfigurationTests
         _configuration.TrxFiles.ElementAt(1).Should().Be("file2");
         _configuration.OutputPath.Should().Be("output");
         _configuration.LogLevel.Should().Be(LogLevel.Debug);
+        _configuration.Namespace.Should().Be("http://test");
     }
 
     [Fact]
