@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="2.0.0-alpha.0"></a>
+## [2.0.0-alpha.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.0.0-alpha.0) (2024-02-18)
+
+### Features
+
+* add option to copy files from original folder to output folder ([9accf31](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/9accf3189094773550e6033201128da946bafff0))
+* bump target framework to net8.0 ([f994a3f](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/f994a3fe4024042eaa07a55b3cf858038246de65))
+
+### Breaking Changes
+
+* bump target framework to net8.0 ([f994a3f](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/f994a3fe4024042eaa07a55b3cf858038246de65))
+
 <a name="1.4.0-alpha.1"></a>
 ## [1.4.0-alpha.1](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v1.4.0-alpha.1) (2024-02-15)
 
