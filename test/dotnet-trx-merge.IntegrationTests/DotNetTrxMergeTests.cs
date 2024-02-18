@@ -60,6 +60,53 @@ public class DotNetTrxMergeTests
         output.Should().Contain("Found 1 tests in file");
         output.Should().Contain("Found 1 tests in file");
     }
+    
+    [Fact]
+    public void DotnetTrxMerge_WithSelectingDir_CopyFiles_Success()
+    {
+        // Arrange
+        Environment.ExitCode = 0;
+
+        // Act
+        var output = RunDotNetTestRerunAndCollectOutputMessage("MergeWithTwoFilesAllPassWithExtraFiles",
+            $"-d {_dir}/MergeWithTwoFilesAllPassWithExtraFiles/ -c");
+
+        // Assert
+        Environment.ExitCode.Should().Be(0);
+        output.Should().Contain("Found 2 files to merge");
+        output.Should().Contain("Found 1 tests in file");
+        output.Should().Contain("Found 1 tests in file");
+    }
+    
+        
+    [Fact]
+    public async Task DotnetTrxMerge_WithOutputFolder_CopyFiles_Success()
+    {
+        // Arrange
+        Environment.ExitCode = 0;
+        var directory = $"{_dir}/DiffFolder";
+        var outputFile = $"{directory}/mergeDocument.trx";
+
+        // Act
+        var _ = RunDotNetTestRerunAndCollectOutputMessage("MergeWithTwoFilesAllPassWithExtraFiles",
+            $"-d {_dir}/MergeWithTwoFilesAllPassWithExtraFiles/ -r -o {outputFile} --copyOriginalFiles");
+
+        // Assert
+        Environment.ExitCode.Should().Be(0);
+        File.Exists(outputFile).Should().BeTrue();
+        var text = await File.ReadAllTextAsync(outputFile);
+        text.Should().Contain("<Counters total=\"1\" passed=\"1\" failed=\"0\" />");
+        text.Should().Contain("testId=\"86e2b6e4-df7a-e4fa-006e-c056c908e219\"");
+        text.Should().Contain("testName=\"SecondSimpleNumberCompare\"");
+        Directory.EnumerateDirectories(directory).Should().HaveCount(1);
+        Directory.EnumerateDirectories(directory).ElementAt(0).Should().Contain("TestFolder");
+        var testFolder = $"{directory}/TestFolder";
+        Directory.EnumerateDirectories(testFolder).Should().HaveCount(1);
+        Directory.EnumerateDirectories(testFolder).ElementAt(0).Should().Contain("SubFolder");
+        Directory.EnumerateFiles(testFolder).Should().HaveCount(1);
+        Directory.EnumerateFiles(testFolder).ElementAt(0).Should().Contain("File1.txt");
+    }
+
 
     [Fact]
     public void DotnetTrxMerge_WithNoFileFound_Success()
