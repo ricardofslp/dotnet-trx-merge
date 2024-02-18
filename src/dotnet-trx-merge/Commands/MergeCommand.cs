@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using System.Xml.Linq;
 using dotnet_trx_merge.Commands.Configurations;
 using dotnet_trx_merge.Extensions;
 using dotnet_trx_merge.Logging;
@@ -34,30 +35,52 @@ public class MergeCommand : RootCommand
 
     public void Run()
     {
-        var trxFiles = GetTrxFiles();
+        (var trxFiles, var directoryPath) = GetTrxFiles();
         _log.Debug($"Found {trxFiles.Length} files to merge");
 
         if (trxFiles.Length > 0)
         {
-            var mergedDocument = _trxFetcher.AddLatestTests(trxFiles); 
+            var mergedDocument = _trxFetcher.AddLatestTests(trxFiles);
             mergedDocument.ReplaceAllNamespaces(_config.Namespace);
-
+            
+            if (_config.CopyOriginalFiles && _config.IsDifferentOutputFolder())
+                CopyFolder(directoryPath, Path.GetDirectoryName(_config.OutputPath)!);
+            
             _log.Debug($"Document {_config.OutputPath} was saved");
             mergedDocument.Save(_config.OutputPath);
         }
     }
 
-    private string[] GetTrxFiles()
+    private (string[] trxFiles, string directory) GetTrxFiles()
     {
         _log.Debug("Start fetching trx files");
         if (_config.IsDirectory())
         {
             string directoryPath = Path.GetDirectoryName(_config.Directory)!;
-            return Directory.GetFiles(directoryPath,
+            return (Directory.GetFiles(directoryPath,
                 "*.trx",
-                _config.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+                _config.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly), directoryPath);
         }
 
-        return _config.TrxFiles.ToArray();
+        return (_config.TrxFiles.ToArray(), string.Empty);
+    }
+
+    private static void CopyFolder(string sourcePath, string destinationPath)
+    {
+        // Create new directory in destination
+        Directory.CreateDirectory(destinationPath);
+
+        // Copy files
+        foreach (string sourceFile in Directory.GetFiles(sourcePath))
+        {
+            string destinationFile = Path.Combine(destinationPath, Path.GetFileName(sourceFile));
+            File.Copy(sourceFile, destinationFile, true); // Overwrite existing files
+        }
+
+        // Copy subdirectories recursively
+        foreach (string subDirectory in Directory.GetDirectories(sourcePath))
+        {
+            CopyFolder(subDirectory, Path.Combine(destinationPath, Path.GetFileName(subDirectory)));
+        }
     }
 }

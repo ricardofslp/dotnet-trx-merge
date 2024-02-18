@@ -15,6 +15,7 @@ public class MergeCommandConfiguration
     public bool Recursive { get; internal set; }
     public string Namespace { get; internal set; }
     public string OutputPath { get; internal set; }
+    public bool CopyOriginalFiles { get; internal set; }
     
     #endregion Properties
 
@@ -58,6 +59,13 @@ public class MergeCommandConfiguration
         Description = "Output file path. Must include the file name, not just a directory.",
         IsRequired = false
     };
+    
+    private readonly Option<string> CopyOriginalFilesOption = new(new[] { "--copyOriginalFiles", "-c" })
+    {
+        Description = "Copy Original Files.",
+        IsRequired = false,
+        Arity = ArgumentArity.Zero
+    };
 
     #endregion Options
 
@@ -69,6 +77,7 @@ public class MergeCommandConfiguration
         cmd.Add(RecursiveOption);
         cmd.Add(NamespaceOption);
         cmd.Add(OutputPathOption);
+        cmd.Add(CopyOriginalFilesOption);
     }
 
     public void GetValues(InvocationContext context)
@@ -79,12 +88,16 @@ public class MergeCommandConfiguration
         Recursive = context.ParseResult.FindResultFor(RecursiveOption) is not null;
         Namespace = context.ParseResult.GetValueForOption(NamespaceOption)!;
         OutputPath = context.ParseResult.GetValueForOption(OutputPathOption)!;
+        CopyOriginalFiles = context.ParseResult.FindResultFor(CopyOriginalFilesOption) is not null;
         
         ValidateInput();
     }
 
     public bool IsDirectory()
         => !string.IsNullOrWhiteSpace(Directory);
+
+    public bool IsDifferentOutputFolder()
+        => Path.GetDirectoryName(OutputPath)?.Equals(".") is false;
     
 
     private void ValidateInput()
