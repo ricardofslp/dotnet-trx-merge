@@ -12,7 +12,7 @@
         public TestEntry TestEntryId { get; }
 
         public override string? ToString()
-        {
+        { 
             return $"{TestIdentity.TestId} - {TestEntryId.ExecutionId}";
         }
     }
