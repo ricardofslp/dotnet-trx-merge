@@ -71,14 +71,14 @@ public class MergeCommand : RootCommand
         Directory.CreateDirectory(destinationPath);
 
         // Copy files
-        foreach (string sourceFile in Directory.GetFiles(sourcePath))
+        foreach (string sourceFile in Directory.EnumerateFiles(sourcePath))
         {
             string destinationFile = Path.Combine(destinationPath, Path.GetFileName(sourceFile));
             File.Copy(sourceFile, destinationFile, true); // Overwrite existing files
         }
 
         // Copy subdirectories recursively
-        foreach (string subDirectory in Directory.GetDirectories(sourcePath))
+        foreach (string subDirectory in Directory.EnumerateDirectories(sourcePath))
         {
             CopyFolder(subDirectory, Path.Combine(destinationPath, Path.GetFileName(subDirectory)));
         }

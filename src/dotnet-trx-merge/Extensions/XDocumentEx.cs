@@ -4,9 +4,10 @@ namespace dotnet_trx_merge.Extensions;
 
 public static class XDocumentEx
 {
-    public static XDocument ReplaceAllNamespaces(this XDocument doc, string? newNsValue)
+    public static XDocument? ReplaceAllNamespaces(this XDocument? doc, string? newNsValue)
     {
-        if (string.IsNullOrWhiteSpace(newNsValue))
+        if (string.IsNullOrWhiteSpace(newNsValue)
+            || doc?.Root is null)
             return doc;
         
         XNamespace newNs = XNamespace.Get(newNsValue);
