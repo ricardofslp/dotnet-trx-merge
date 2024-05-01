@@ -27,12 +27,22 @@ public class TrxFetcher : ITrxFetcher
         TestTimes testTimes = new TestTimes();
         foreach (var trxFile in filesToMerge)
         {
+            _log.Debug($"Processing file {trxFile}");
             var trxDocument = XDocument.Load(trxFile);
             XElement? rootElement = trxDocument.Root;
             if (rootElement == null)
                 throw new Exception($"Could not find root element in file {trxFile}");
             ns = rootElement.GetDefaultNamespace();
-            runUser ??= rootElement.Attribute("runUser")!.Value;
+            var runUserElement = rootElement.Attribute("runUser");
+            if (runUserElement != null)
+            {
+                runUser ??= runUserElement.Value;
+            } else
+            {
+                _log.Warning($"Could not find runUser attribute in file {trxFile}. Defaulting to UnknownRunUser");
+                runUser = "UnknownRunUser";
+            }
+            
             testTimes.AddTestTimes(rootElement.Descendants(ns+"Times").FirstOrDefault());
             var results = trxDocument.Descendants(ns + "UnitTestResult");
             var definitions = trxDocument.Descendants(ns + "UnitTest");

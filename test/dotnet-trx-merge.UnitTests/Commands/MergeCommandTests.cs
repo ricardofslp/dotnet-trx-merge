@@ -50,7 +50,7 @@ public class MergeCommandTests
         command.Run();
 
         // Assert
-        trxFetcher.Received(1).AddLatestTests(Arg.Is<string[]>(files => files.Count() == 12));
+        trxFetcher.Received(1).AddLatestTests(Arg.Is<string[]>(files => files.Count() == 13));
     }
     
     [Fact]
