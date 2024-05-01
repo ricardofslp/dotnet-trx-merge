@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="2.0.1"></a>
+## [2.0.1](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.0.1) (2024-05-01)
+
+### Bug Fixes
+
+* Set default for runUser if its not found ([fcda632](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/fcda632da94a2bc485fbf51e4949d7854ef78d9c))
+
 <a name="2.0.0"></a>
 ## [2.0.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.0.0) (2024-03-01)
 
