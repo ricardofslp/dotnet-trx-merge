@@ -9,6 +9,7 @@ namespace dotnet_test_rerun.UnitTests.Services;
 
 public class TrxFetcherTests
 {
+    private const string TrxWithNoRunUser = "../../../Fixtures/Merge/TrxWithNoRunUser.trx";
     private const string TrxAllPass = "../../../Fixtures/Merge/TrxAllPass.trx";
     private const string TrxWithFailures = "../../../Fixtures/Merge/TrxWithFailures.trx";
     private const string TrxWithErrors = "../../../Fixtures/Merge/TrxWithErrors.trx";
@@ -691,6 +692,46 @@ public class TrxFetcherTests
             "3dacbae9-707e-1881-d63c-3573123dffc6");
         
         ValidateOutcome(mergedDocument, 2, 2, 0, "Completed");
+    }
+
+    [Fact]
+    public void AddLatestTests_WithOneFileWithNoRunUser_AllPass()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxWithNoRunUser });
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(1);
+        ValidateTestResult(results.ElementAt(0),
+            "e68ff2c7-8309-483b-a1fd-414967943cf0",
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219",
+            "SecondSimpleNumberCompare",
+            "Passed");
+
+        var definitions = mergedDocument.Descendants("UnitTest");
+        definitions.Should().HaveCount(1);
+        ValidateTestDefinition(definitions.ElementAt(0),
+            "e68ff2c7-8309-483b-a1fd-414967943cf0",
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219",
+            "SecondSimpleNumberCompare");
+
+        var entries = mergedDocument.Descendants("TestEntry");
+        entries.Should().HaveCount(1);
+        ValidateTestEntry(entries.ElementAt(0),
+            "e68ff2c7-8309-483b-a1fd-414967943cf0",
+            "86e2b6e4-df7a-e4fa-006e-c056c908e219");
+
+        ValidateOutcome(mergedDocument, 1, 1, 0, "Completed");
+        ValidateTimes(mergedDocument.Descendants("Times").First(),
+            "2023-08-29T18:35:26.3589967+01:00",
+            "2023-08-29T18:35:26.3589971+01:00",
+            "2023-08-29T18:35:25.5259659+01:00",
+            "2023-08-29T18:35:26.3652254+01:00");
     }
 
     private void ValidateTimes(XElement times, string creation, string queued, string start, string finish)
