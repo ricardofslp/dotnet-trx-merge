@@ -25,7 +25,8 @@ public static class XDocumentEx
             if (oldNsAttr is not null)
             {
                 oldNsAttr.Remove();
-                element.SetAttributeValue(XNamespace.Xmlns + "ns", newNs);
+                if (string.IsNullOrWhiteSpace(newNs.NamespaceName) is false)
+                    element.SetAttributeValue(XNamespace.Xmlns + "ns", newNs);
             }
 
             // Recurse into child elements
