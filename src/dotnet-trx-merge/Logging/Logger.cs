@@ -76,9 +76,10 @@ public class Logger : ILogger
     /// Log the Exception
     /// </summary>
     /// <param name="e">an exception</param>
-    public void Exception(Exception e)
+    /// <param name="format">exception formats</param>
+    public void Exception(Exception e, ExceptionFormats format = ExceptionFormats.Default)
     {
-        AnsiConsole.WriteException(e);
+        AnsiConsole.WriteException(e, format: format);
     }
 
     /// <summary>
