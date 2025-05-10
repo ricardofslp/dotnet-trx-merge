@@ -1,4 +1,5 @@
-﻿using Spectre.Console.Rendering;
+﻿using Spectre.Console;
+using Spectre.Console.Rendering;
 
 namespace dotnet_trx_merge.Logging;
 
@@ -40,12 +41,14 @@ public interface ILogger
     /// Log the Exception
     /// </summary>
     /// <param name="e">an exception</param>
-    public void Exception(Exception e);
+    /// <param name="format"></param>
+    public void Exception(Exception e, ExceptionFormats format = ExceptionFormats.Default);
 
     /// <summary>
     /// Logs the progress of an operation, single line with a spinner
     /// </summary>
     /// <param name="msg">initial message to print</param>
+    /// <param name="action"></param>
     public void Status(string msg, Action<StatusContext> action = null!);
 
     /// <summary>

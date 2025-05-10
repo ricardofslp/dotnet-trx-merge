@@ -1,4 +1,5 @@
-﻿using dotnet_trx_merge.Logging;
+﻿using System.Diagnostics;
+using dotnet_trx_merge.Logging;
 using FluentAssertions;
 using Spectre.Console;
 using Spectre.Console.Testing;
@@ -128,7 +129,7 @@ public class LoggerTests
             var exception = new Exception("test exception");
 
             // Act
-            logger.Exception(exception);
+            logger.Exception(exception, ExceptionFormats.NoStackTrace);
 
             // Assert
             testConsole.Output.Should().Contain(exception.Message);
