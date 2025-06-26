@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="2.0.2"></a>
+## [2.0.2](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.0.2) (2025-06-26)
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.0.1) (2024-05-01)
 
