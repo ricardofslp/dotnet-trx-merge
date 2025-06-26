@@ -1,5 +1,5 @@
-﻿using dotnet_trx_merge.Exceptions;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using dotnet_trx_merge.Exceptions;
 using Xunit;
 
 namespace dotnet_test_rerun.UnitTests.Exceptions;

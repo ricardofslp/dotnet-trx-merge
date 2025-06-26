@@ -1,10 +1,10 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using AwesomeAssertions;
 using dotnet_trx_merge.Commands.Configurations;
 using dotnet_trx_merge.Exceptions;
 using dotnet_trx_merge.Logging;
-using FluentAssertions;
 using Xunit;
 
 namespace dotnet_test_rerun.UnitTests.Commands.Configurations;

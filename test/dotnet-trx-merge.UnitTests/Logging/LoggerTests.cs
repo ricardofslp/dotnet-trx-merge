@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
+﻿using AwesomeAssertions;
 using dotnet_trx_merge.Logging;
-using FluentAssertions;
 using Spectre.Console;
 using Spectre.Console.Testing;
 using Xunit;

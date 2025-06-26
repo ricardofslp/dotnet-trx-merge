@@ -3,12 +3,12 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.IO.Abstractions;
 using System.Xml.Linq;
+using AwesomeAssertions;
 using dotnet_test_rerun.IntegrationTests.Utilities;
 using dotnet_trx_merge.Commands;
 using dotnet_trx_merge.Commands.Configurations;
 using dotnet_trx_merge.Logging;
 using dotnet_trx_merge.Services;
-using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
