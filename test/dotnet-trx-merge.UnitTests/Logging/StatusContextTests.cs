@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Xunit;
 using StatusContext = dotnet_trx_merge.Logging.StatusContext;
 

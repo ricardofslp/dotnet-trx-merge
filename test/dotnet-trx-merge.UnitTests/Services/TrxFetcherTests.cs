@@ -1,8 +1,7 @@
 ﻿using System.Xml.Linq;
+using AwesomeAssertions;
 using dotnet_trx_merge.Logging;
 using dotnet_trx_merge.Services;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Xunit;
 
 namespace dotnet_test_rerun.UnitTests.Services;
