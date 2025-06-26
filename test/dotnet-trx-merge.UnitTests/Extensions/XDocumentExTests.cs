@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
+using AwesomeAssertions;
 using dotnet_trx_merge.Extensions;
-using FluentAssertions;
 using Xunit;
 
 namespace dotnet_test_rerun.UnitTests.Extensions;
