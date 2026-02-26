@@ -14,11 +14,15 @@ public class TrxFetcher : ITrxFetcher
     }
 
     public XDocument AddLatestTests(string[] filesToMerge)
+        => MergeWithAttachments(filesToMerge).MergedDocument;
+
+    public MergeResult MergeWithAttachments(string[] filesToMerge)
         => FetchOnlyLatest(filesToMerge);
 
-    private XDocument FetchOnlyLatest(string[] filesToMerge)
+    private MergeResult FetchOnlyLatest(string[] filesToMerge)
     {
         var testResultDictionary = new Dictionary<TestIdentity, XElement>();
+        var testResultSourceDictionary = new Dictionary<TestIdentity, string>();
         var testDefinitionsDictionary = new Dictionary<string, XElement>();
         var testEntriesDictionary = new Dictionary<TestIdentity, XElement>();
         var outcomeDictionary = new Dictionary<string, int>();
@@ -29,6 +33,7 @@ public class TrxFetcher : ITrxFetcher
         foreach (var trxFile in filesToMerge)
         {
             _log.Debug($"Processing file {trxFile}");
+            var trxDirectory = Path.GetDirectoryName(Path.GetFullPath(trxFile)) ?? "";
             var trxDocument = XDocument.Load(trxFile);
             XElement? rootElement = trxDocument.Root;
             if (rootElement == null)
@@ -43,7 +48,7 @@ public class TrxFetcher : ITrxFetcher
                 _log.Warning($"Could not find runUser attribute in file {trxFile}. Defaulting to UnknownRunUser");
                 runUser = "UnknownRunUser";
             }
-            
+
             testTimes.AddTestTimes(rootElement.Descendants(ns+"Times").FirstOrDefault());
 
             // Collect CollectorDataEntries (e.g., code coverage file references)
@@ -69,13 +74,14 @@ public class TrxFetcher : ITrxFetcher
                 {
                     if (testResultDictionary.ContainsKey(testId.TestIdentity))
                         outcomeDictionary[testResultDictionary[testId.TestIdentity].Attribute("outcome")!.Value.ToLower()]--;
-                    
+
                     testResultDictionary[testId.TestIdentity] = unitTestResult;
+                    testResultSourceDictionary[testId.TestIdentity] = trxDirectory;
                     testDefinitionsDictionary[testId.TestIdentity.TestId] = GetTestDefinition(definitions, testId.TestIdentity.TestId);
                     testEntriesDictionary[testId.TestIdentity] = GetTestEntry(entries, testId.TestEntryId);
 
                     var outcomeValue = testResultDictionary[testId.TestIdentity].Attribute("outcome")!.Value.ToLower();
-                    
+
                     if(!outcomeDictionary.ContainsKey(outcomeValue!))
                         outcomeDictionary[outcomeValue] = 0;
                     outcomeDictionary[outcomeValue]++;
@@ -89,7 +95,18 @@ public class TrxFetcher : ITrxFetcher
         var testDefinitionSection = new XElement("TestDefinitions", testDefinitionsDictionary.Values);
         var testEntriesSection = new XElement("TestEntries", testEntriesDictionary.Values);
 
-        // Add the components to the mergedDocument        
+        // Build list of attachment directories to copy
+        var attachmentDirectories = new List<AttachmentDirectory>();
+        foreach (var kvp in testResultDictionary)
+        {
+            var relativeResultsDir = kvp.Value.Attribute("relativeResultsDirectory")?.Value;
+            if (!string.IsNullOrEmpty(relativeResultsDir) && testResultSourceDictionary.TryGetValue(kvp.Key, out var sourceDir))
+            {
+                attachmentDirectories.Add(new AttachmentDirectory(sourceDir, relativeResultsDir));
+            }
+        }
+
+        // Add the components to the mergedDocument
         var mergedDocument = new XDocument(GenerateTestRunAttribute(ns, runUser));
         var times = new XElement(ns + "Times");
         testTimes.SetTestTimes(times);
@@ -98,7 +115,7 @@ public class TrxFetcher : ITrxFetcher
         mergedDocument.Root.Add(testDefinitionSection);
         mergedDocument.Root.Add(testEntriesSection);
         mergedDocument.Root.Add(CreateOutcome(outcomeDictionary, collectorDataEntries));
-        return mergedDocument;
+        return new MergeResult(mergedDocument, attachmentDirectories);
     }
 
     private XElement CreateOutcome(Dictionary<string, int> outcomes, List<XElement> collectorDataEntries)

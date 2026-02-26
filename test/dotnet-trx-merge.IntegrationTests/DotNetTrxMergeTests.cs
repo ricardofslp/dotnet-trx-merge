@@ -240,7 +240,7 @@ public class DotNetTrxMergeTests
         // Arrange
         Environment.ExitCode = 0;
         var outputFile = $"{_dir}/FilesWithNamespaces/mergeDocument.trx";
-        var newNamespace = "http://newNamespace/"; 
+        var newNamespace = "http://newNamespace/";
 
         // Act
         var _ = RunDotNetTestRerunAndCollectOutputMessage("MergeFilesWithNamespaces",
@@ -257,5 +257,44 @@ public class DotNetTrxMergeTests
         XDocument doc = XDocument.Load(outputFile);
         var ns = doc.Root.GetDefaultNamespace();
         ns.NamespaceName.Should().Be("http://newNamespace/");
+    }
+
+    [Fact]
+    public async Task DotnetTrxMerge_WithAttachments_ShouldCopyAttachmentDirectories()
+    {
+        // Arrange
+        Environment.ExitCode = 0;
+        var outputDirectory = $"{_dir}/MergeWithAttachmentsOutput";
+        var outputFile = $"{outputDirectory}/mergedWithAttachments.trx";
+        Directory.CreateDirectory(outputDirectory);
+
+        // Act - Merge two TRX files where file2 has a later timestamp (simulating a rerun)
+        var output = RunDotNetTestRerunAndCollectOutputMessage("MergeWithAttachments",
+            $"-d {_dir}/MergeWithAttachments/ -o {outputFile}");
+
+        // Assert
+        Environment.ExitCode.Should().Be(0);
+        output.Should().Contain("Found 2 files to merge");
+
+        // Verify merged TRX file exists
+        File.Exists(outputFile).Should().BeTrue();
+
+        // Verify the merged result uses the latest test (from TrxWithAttachment2 which passed)
+        var text = await File.ReadAllTextAsync(outputFile);
+        text.Should().Contain("<Counters total=\"1\" passed=\"1\" failed=\"0\" />");
+        text.Should().Contain("testName=\"TestWithScreenshot\"");
+        text.Should().Contain("relativeResultsDirectory=\"a2222222-8309-483b-a1fd-414967943cf0\"");
+
+        // Verify the attachment directory was copied (from the latest/kept test result)
+        var attachmentDir = Path.Combine(outputDirectory, "a2222222-8309-483b-a1fd-414967943cf0");
+        Directory.Exists(attachmentDir).Should().BeTrue("Attachment directory should be copied to output");
+
+        // Verify the attachment file exists
+        var attachmentFile = Path.Combine(attachmentDir, "screenshot2.png");
+        File.Exists(attachmentFile).Should().BeTrue("Attachment file should be copied");
+
+        // Verify the content of the attachment file
+        var attachmentContent = await File.ReadAllTextAsync(attachmentFile);
+        attachmentContent.Should().Contain("Screenshot from passed test run 2");
     }
 }

@@ -23,6 +23,8 @@ public class TrxFetcherTests
     private const string TrxDuplicateTestIdSecondRunNewFailures = "../../../Fixtures/Merge/TrxDuplicateTestIdSecondRunNewFailures.trx";
     private const string TrxWithCodeCoverage1 = "../../../Fixtures/Merge/TrxWithCodeCoverage1.trx";
     private const string TrxWithCodeCoverage2 = "../../../Fixtures/Merge/TrxWithCodeCoverage2.trx";
+    private const string TrxWithAttachment1 = "../../../Fixtures/Merge/TrxWithAttachment1.trx";
+    private const string TrxWithAttachment2 = "../../../Fixtures/Merge/TrxWithAttachment2.trx";
 
     [Fact]
     public void AddLatestTests_WithOneFile_AllPass()
@@ -827,6 +829,80 @@ public class TrxFetcherTests
         // Assert
         var collectorDataEntries = mergedDocument.Descendants("CollectorDataEntries");
         collectorDataEntries.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void MergeWithAttachments_WithOneFileWithAttachment_ShouldReturnAttachmentDirectory()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act
+        var mergeResult = trxFetcher.MergeWithAttachments(new[] { TrxWithAttachment1 });
+
+        // Assert
+        mergeResult.MergedDocument.Should().NotBeNull();
+        mergeResult.AttachmentDirectories.Should().HaveCount(1);
+        mergeResult.AttachmentDirectories[0].RelativeResultsDirectory.Should().Be("a1111111-8309-483b-a1fd-414967943cf0");
+    }
+
+    [Fact]
+    public void MergeWithAttachments_WithTwoFilesWithSameTestDifferentRuns_ShouldReturnLatestAttachmentDirectory()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act - TrxWithAttachment2 has a later endTime, so it should be kept
+        var mergeResult = trxFetcher.MergeWithAttachments(new[] { TrxWithAttachment1, TrxWithAttachment2 });
+
+        // Assert
+        mergeResult.MergedDocument.Should().NotBeNull();
+        var results = mergeResult.MergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(1);
+
+        // Should have the attachment from the later run (Attachment2)
+        mergeResult.AttachmentDirectories.Should().HaveCount(1);
+        mergeResult.AttachmentDirectories[0].RelativeResultsDirectory.Should().Be("a2222222-8309-483b-a1fd-414967943cf0");
+
+        // Verify the test outcome is Passed (from the rerun)
+        ValidateOutcome(mergeResult.MergedDocument, 1, 1, 0, "Completed");
+    }
+
+    [Fact]
+    public void MergeWithAttachments_WithMultipleDistinctTests_ShouldReturnAllAttachmentDirectories()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act - TrxAllPass has no attachments, TrxWithAttachment1 has one
+        var mergeResult = trxFetcher.MergeWithAttachments(new[] { TrxWithAttachment1, TrxWithCodeCoverage2 });
+
+        // Assert
+        mergeResult.MergedDocument.Should().NotBeNull();
+        var results = mergeResult.MergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(2);
+
+        // Should have attachment directory from TrxWithAttachment1 (TrxWithCodeCoverage2 has relativeResultsDirectory too)
+        mergeResult.AttachmentDirectories.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void MergeWithAttachments_WithFilesWithRelativeResultsDirectory_ShouldReturnAttachmentDirectories()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act - TrxWithNoRunUser has relativeResultsDirectory attribute
+        var mergeResult = trxFetcher.MergeWithAttachments(new[] { TrxWithNoRunUser });
+
+        // Assert
+        mergeResult.MergedDocument.Should().NotBeNull();
+        mergeResult.AttachmentDirectories.Should().HaveCount(1);
+        mergeResult.AttachmentDirectories[0].RelativeResultsDirectory.Should().Be("e68ff2c7-8309-483b-a1fd-414967943cf0");
     }
 
     private void ValidateTimes(XElement times, string creation, string queued, string start, string finish)

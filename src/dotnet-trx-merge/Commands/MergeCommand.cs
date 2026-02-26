@@ -1,6 +1,7 @@
-﻿using System.CommandLine;
+using System.CommandLine;
 using System.Xml.Linq;
 using dotnet_trx_merge.Commands.Configurations;
+using dotnet_trx_merge.Domain;
 using dotnet_trx_merge.Extensions;
 using dotnet_trx_merge.Logging;
 using dotnet_trx_merge.Services;
@@ -40,14 +41,21 @@ public class MergeCommand : RootCommand
 
         if (trxFiles.Length > 0)
         {
-            var mergedDocument = _trxFetcher.AddLatestTests(trxFiles);
-            mergedDocument.ReplaceAllNamespaces(_config.Namespace);
-            
+            var mergeResult = _trxFetcher.MergeWithAttachments(trxFiles);
+            mergeResult.MergedDocument.ReplaceAllNamespaces(_config.Namespace);
+
+            var outputDirectory = Path.GetDirectoryName(_config.OutputPath)!;
+
             if (_config.CopyOriginalFiles && _config.IsDifferentOutputFolder())
-                CopyFolder(directoryPath, Path.GetDirectoryName(_config.OutputPath)!);
-            
+            {
+                CopyFolder(directoryPath, outputDirectory);
+            }
+
+            // Copy attachment directories for each test result
+            CopyAttachmentDirectories(mergeResult.AttachmentDirectories, outputDirectory);
+
             _log.Debug($"Document {_config.OutputPath} was saved");
-            mergedDocument.Save(_config.OutputPath);
+            mergeResult.MergedDocument.Save(_config.OutputPath);
         }
     }
 
@@ -63,6 +71,21 @@ public class MergeCommand : RootCommand
         }
 
         return (_config.TrxFiles.ToArray(), string.Empty);
+    }
+
+    private void CopyAttachmentDirectories(List<AttachmentDirectory> attachmentDirectories, string outputDirectory)
+    {
+        foreach (var attachment in attachmentDirectories)
+        {
+            var sourceAttachmentPath = Path.Combine(attachment.SourceTrxDirectory, attachment.RelativeResultsDirectory);
+            var destinationAttachmentPath = Path.Combine(outputDirectory, attachment.RelativeResultsDirectory);
+
+            if (Directory.Exists(sourceAttachmentPath))
+            {
+                _log.Debug($"Copying attachment directory from {sourceAttachmentPath} to {destinationAttachmentPath}");
+                CopyFolder(sourceAttachmentPath, destinationAttachmentPath);
+            }
+        }
     }
 
     private static void CopyFolder(string sourcePath, string destinationPath)
