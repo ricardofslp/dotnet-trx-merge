@@ -1,9 +1,10 @@
-﻿using System.CommandLine;
+using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.Xml.Linq;
 using dotnet_trx_merge.Commands;
 using dotnet_trx_merge.Commands.Configurations;
+using dotnet_trx_merge.Domain;
 using dotnet_trx_merge.Logging;
 using dotnet_trx_merge.Services;
 using NSubstitute;
@@ -25,16 +26,17 @@ public class MergeCommandTests
         var config = new MergeCommandConfiguration();
         InitialConfigurationSetup(config, $"-f {FirstFilePath} -f {SecondFilePath}");
         var trxFetcher = Substitute.For<ITrxFetcher>();
-        trxFetcher.AddLatestTests(Arg.Any<string[]>()).Returns(new XDocument(new XElement("TestRun")));
+        var mergeResult = new MergeResult(new XDocument(new XElement("TestRun")), new List<AttachmentDirectory>());
+        trxFetcher.MergeWithAttachments(Arg.Any<string[]>()).Returns(mergeResult);
         var command = new MergeCommand(logger, config, trxFetcher);
 
         // Act
         command.Run();
 
         // Assert
-        trxFetcher.Received(1).AddLatestTests(Arg.Is<string[]>(files => files.Count() == 2));
+        trxFetcher.Received(1).MergeWithAttachments(Arg.Is<string[]>(files => files.Count() == 2));
     }
-    
+
     [Fact]
     public void Run_TestsOnce_WithDirectory_NoFailures()
     {
@@ -43,16 +45,17 @@ public class MergeCommandTests
         var config = new MergeCommandConfiguration();
         InitialConfigurationSetup(config, $"-d {Directory} -r");
         var trxFetcher = Substitute.For<ITrxFetcher>();
-        trxFetcher.AddLatestTests(Arg.Any<string[]>()).Returns(new XDocument(new XElement("TestRun")));
+        var mergeResult = new MergeResult(new XDocument(new XElement("TestRun")), new List<AttachmentDirectory>());
+        trxFetcher.MergeWithAttachments(Arg.Any<string[]>()).Returns(mergeResult);
         var command = new MergeCommand(logger, config, trxFetcher);
 
         // Act
         command.Run();
 
         // Assert
-        trxFetcher.Received(1).AddLatestTests(Arg.Is<string[]>(files => files.Count() == 15));
+        trxFetcher.Received(1).MergeWithAttachments(Arg.Is<string[]>(files => files.Count() == 17));
     }
-    
+
     [Fact]
     public async Task InvokeCommand_TestsOnce_NoFailures()
     {
@@ -62,13 +65,15 @@ public class MergeCommandTests
         var cmd = new Command("trx-merge");
         config.Set(cmd);
         var trxFetcher = Substitute.For<ITrxFetcher>();
+        var mergeResult = new MergeResult(new XDocument(new XElement("TestRun")), new List<AttachmentDirectory>());
+        trxFetcher.MergeWithAttachments(Arg.Any<string[]>()).Returns(mergeResult);
         var command = new MergeCommand(logger, config, trxFetcher);
 
         // Act
         await command.InvokeAsync($"-f {FirstFilePath} -f {SecondFilePath}");
 
         // Assert
-        trxFetcher.Received(1).AddLatestTests(Arg.Is<string[]>(files => 
+        trxFetcher.Received(1).MergeWithAttachments(Arg.Is<string[]>(files =>
                 files.ElementAt(0).Equals(FirstFilePath) &&
                 files.ElementAt(1).Equals(SecondFilePath)));
     }
