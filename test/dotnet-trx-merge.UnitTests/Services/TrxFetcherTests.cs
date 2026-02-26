@@ -21,6 +21,8 @@ public class TrxFetcherTests
     private const string TrxDuplicateTestIdAllPassSecondRun = "../../../Fixtures/Merge/TrxDuplicateTestIdAllPassSecondRun.trx";
     private const string TrxDuplicateTestIdSecondRunStillFails = "../../../Fixtures/Merge/TrxDuplicateTestIdSecondRunStillFails.trx";
     private const string TrxDuplicateTestIdSecondRunNewFailures = "../../../Fixtures/Merge/TrxDuplicateTestIdSecondRunNewFailures.trx";
+    private const string TrxWithCodeCoverage1 = "../../../Fixtures/Merge/TrxWithCodeCoverage1.trx";
+    private const string TrxWithCodeCoverage2 = "../../../Fixtures/Merge/TrxWithCodeCoverage2.trx";
 
     [Fact]
     public void AddLatestTests_WithOneFile_AllPass()
@@ -731,6 +733,100 @@ public class TrxFetcherTests
             "2023-08-29T18:35:26.3589971+01:00",
             "2023-08-29T18:35:25.5259659+01:00",
             "2023-08-29T18:35:26.3652254+01:00");
+    }
+
+    [Fact]
+    public void AddLatestTests_WithOneFileWithCodeCoverage_ShouldPreserveCollectorDataEntries()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxWithCodeCoverage1 });
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(1);
+
+        var collectorDataEntries = mergedDocument.Descendants("CollectorDataEntries");
+        collectorDataEntries.Should().HaveCount(1);
+
+        var collectors = collectorDataEntries.First().Elements("Collector");
+        collectors.Should().HaveCount(1);
+
+        var uriAttachments = collectors.First().Descendants("UriAttachment");
+        uriAttachments.Should().HaveCount(1);
+
+        var href = uriAttachments.First().Element("A")?.Attribute("href")?.Value;
+        href.Should().Be(@"COMPUTER\coverage1.coverage");
+    }
+
+    [Fact]
+    public void AddLatestTests_WithTwoFilesWithCodeCoverage_ShouldMergeCollectorDataEntries()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxWithCodeCoverage1, TrxWithCodeCoverage2 });
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(2);
+
+        var collectorDataEntries = mergedDocument.Descendants("CollectorDataEntries");
+        collectorDataEntries.Should().HaveCount(1);
+
+        var collectors = collectorDataEntries.First().Elements("Collector");
+        collectors.Should().HaveCount(2);
+
+        var uriAttachments = collectors.SelectMany(c => c.Descendants("UriAttachment")).ToList();
+        uriAttachments.Should().HaveCount(2);
+
+        var hrefs = uriAttachments.Select(ua => ua.Element("A")?.Attribute("href")?.Value).ToList();
+        hrefs.Should().Contain(@"COMPUTER\coverage1.coverage");
+        hrefs.Should().Contain(@"COMPUTER\coverage2.coverage");
+    }
+
+    [Fact]
+    public void AddLatestTests_WithMixedFilesWithAndWithoutCodeCoverage_ShouldOnlyIncludeExistingCollectorDataEntries()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act - TrxAllPass has SecondSimpleNumberCompare, TrxWithCodeCoverage2 has ThirdSimpleNumberCompare (different tests)
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxAllPass, TrxWithCodeCoverage2 });
+
+        // Assert
+        var results = mergedDocument.Descendants("UnitTestResult");
+        results.Should().HaveCount(2);
+
+        var collectorDataEntries = mergedDocument.Descendants("CollectorDataEntries");
+        collectorDataEntries.Should().HaveCount(1);
+
+        var collectors = collectorDataEntries.First().Elements("Collector");
+        collectors.Should().HaveCount(1);
+
+        var href = collectors.First().Descendants("UriAttachment").First().Element("A")?.Attribute("href")?.Value;
+        href.Should().Be(@"COMPUTER\coverage2.coverage");
+    }
+
+    [Fact]
+    public void AddLatestTests_WithFilesWithoutCodeCoverage_ShouldNotHaveCollectorDataEntries()
+    {
+        // Arrange
+        var logger = new Logger();
+        var trxFetcher = new TrxFetcher(logger);
+
+        // Act
+        var mergedDocument = trxFetcher.AddLatestTests(new[] { TrxAllPass });
+
+        // Assert
+        var collectorDataEntries = mergedDocument.Descendants("CollectorDataEntries");
+        collectorDataEntries.Should().BeEmpty();
     }
 
     private void ValidateTimes(XElement times, string creation, string queued, string start, string finish)

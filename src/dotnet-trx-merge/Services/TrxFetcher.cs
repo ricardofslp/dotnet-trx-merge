@@ -17,11 +17,12 @@ public class TrxFetcher : ITrxFetcher
         => FetchOnlyLatest(filesToMerge);
 
     private XDocument FetchOnlyLatest(string[] filesToMerge)
-    {   
+    {
         var testResultDictionary = new Dictionary<TestIdentity, XElement>();
         var testDefinitionsDictionary = new Dictionary<string, XElement>();
         var testEntriesDictionary = new Dictionary<TestIdentity, XElement>();
         var outcomeDictionary = new Dictionary<string, int>();
+        var collectorDataEntries = new List<XElement>();
         string runUser = null;
         XNamespace ns = "";
         TestTimes testTimes = new TestTimes();
@@ -44,6 +45,17 @@ public class TrxFetcher : ITrxFetcher
             }
             
             testTimes.AddTestTimes(rootElement.Descendants(ns+"Times").FirstOrDefault());
+
+            // Collect CollectorDataEntries (e.g., code coverage file references)
+            var collectorEntries = trxDocument.Descendants(ns + "CollectorDataEntries").FirstOrDefault();
+            if (collectorEntries != null)
+            {
+                foreach (var collector in collectorEntries.Elements(ns + "Collector"))
+                {
+                    collectorDataEntries.Add(new XElement(collector));
+                }
+            }
+
             var results = trxDocument.Descendants(ns + "UnitTestResult");
             var definitions = trxDocument.Descendants(ns + "UnitTest");
             var entries = trxDocument.Descendants(ns + "TestEntry");
@@ -85,11 +97,11 @@ public class TrxFetcher : ITrxFetcher
         mergedDocument.Root!.Add(testResultsSection);
         mergedDocument.Root.Add(testDefinitionSection);
         mergedDocument.Root.Add(testEntriesSection);
-        mergedDocument.Root.Add(CreateOutcome(outcomeDictionary));
+        mergedDocument.Root.Add(CreateOutcome(outcomeDictionary, collectorDataEntries));
         return mergedDocument;
     }
 
-    private XElement CreateOutcome(Dictionary<string, int> outcomes)
+    private XElement CreateOutcome(Dictionary<string, int> outcomes, List<XElement> collectorDataEntries)
     {
         var resultSummaryElement = new XElement("ResultSummary");
         var countersElement = new XElement("Counters");
@@ -134,7 +146,18 @@ public class TrxFetcher : ITrxFetcher
 
         // Set the outcome attribute of the ResultSummary element
         resultSummaryElement.Add(new XAttribute("outcome", outcomeResult));
-        
+
+        // Add merged CollectorDataEntries if any exist
+        if (collectorDataEntries.Count > 0)
+        {
+            var collectorDataEntriesElement = new XElement("CollectorDataEntries");
+            foreach (var collector in collectorDataEntries)
+            {
+                collectorDataEntriesElement.Add(collector);
+            }
+            resultSummaryElement.Add(collectorDataEntriesElement);
+        }
+
         return resultSummaryElement;
     }
 
