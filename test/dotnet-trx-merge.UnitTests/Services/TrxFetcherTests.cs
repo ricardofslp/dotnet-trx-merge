@@ -966,10 +966,10 @@ public class TrxFetcherTests
         int? error = null,
         int? pending = null)
     {
-        var results = testResult.Descendants("ResultSummary").ElementAt(0);
+        var results = testResult.Descendants().First(e => e.Name.LocalName == "ResultSummary");
         results.Attribute("outcome")!.Value.Should().Be(outcome);
-        
-        var counters = results.Descendants("Counters").ElementAt(0);
+
+        var counters = results.Descendants().First(e => e.Name.LocalName == "Counters");
         counters.Attribute("total")!.Value.Should().Be(total.ToString());
         counters.Attribute("passed")!.Value.Should().Be(passed.ToString());
         counters.Attribute("failed")!.Value.Should().Be(failed.ToString());

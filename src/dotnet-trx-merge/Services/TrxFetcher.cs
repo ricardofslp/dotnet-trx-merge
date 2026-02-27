@@ -45,8 +45,8 @@ public class TrxFetcher : ITrxFetcher
                 runUser ??= runUserElement.Value;
             } else
             {
-                _log.Warning($"Could not find runUser attribute in file {trxFile}. Defaulting to UnknownRunUser");
-                runUser = "UnknownRunUser";
+                _log.Debug($"Could not find runUser attribute in file {trxFile}. Defaulting to UnknownRunUser");
+                runUser ??= "UnknownRunUser";
             }
 
             testTimes.AddTestTimes(rootElement.Descendants(ns+"Times").FirstOrDefault());
@@ -91,9 +91,9 @@ public class TrxFetcher : ITrxFetcher
         }
         // Create a new XElement for TestResults, TestDefinitions and TestEntries
         // Add testDictionary.Values as child elements
-        var testResultsSection = new XElement("Results", testResultDictionary.Values);
-        var testDefinitionSection = new XElement("TestDefinitions", testDefinitionsDictionary.Values);
-        var testEntriesSection = new XElement("TestEntries", testEntriesDictionary.Values);
+        var testResultsSection = new XElement(ns + "Results", testResultDictionary.Values);
+        var testDefinitionSection = new XElement(ns + "TestDefinitions", testDefinitionsDictionary.Values);
+        var testEntriesSection = new XElement(ns + "TestEntries", testEntriesDictionary.Values);
 
         // Build list of attachment directories to copy
         var attachmentDirectories = new List<AttachmentDirectory>();
@@ -114,14 +114,14 @@ public class TrxFetcher : ITrxFetcher
         mergedDocument.Root!.Add(testResultsSection);
         mergedDocument.Root.Add(testDefinitionSection);
         mergedDocument.Root.Add(testEntriesSection);
-        mergedDocument.Root.Add(CreateOutcome(outcomeDictionary, collectorDataEntries));
+        mergedDocument.Root.Add(CreateOutcome(ns, outcomeDictionary, collectorDataEntries));
         return new MergeResult(mergedDocument, attachmentDirectories);
     }
 
-    private XElement CreateOutcome(Dictionary<string, int> outcomes, List<XElement> collectorDataEntries)
+    private XElement CreateOutcome(XNamespace ns, Dictionary<string, int> outcomes, List<XElement> collectorDataEntries)
     {
-        var resultSummaryElement = new XElement("ResultSummary");
-        var countersElement = new XElement("Counters");
+        var resultSummaryElement = new XElement(ns + "ResultSummary");
+        var countersElement = new XElement(ns + "Counters");
         // Define the default attribute values
         var attributes = new Dictionary<string, int>
         {
@@ -167,7 +167,7 @@ public class TrxFetcher : ITrxFetcher
         // Add merged CollectorDataEntries if any exist
         if (collectorDataEntries.Count > 0)
         {
-            var collectorDataEntriesElement = new XElement("CollectorDataEntries");
+            var collectorDataEntriesElement = new XElement(ns + "CollectorDataEntries");
             foreach (var collector in collectorDataEntries)
             {
                 collectorDataEntriesElement.Add(collector);
