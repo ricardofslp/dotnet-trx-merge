@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="2.2.0"></a>
+## [2.2.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.2.0) (2026-02-27)
+
+### Features
+
+* enhance outcome creation to include merged CollectorDataEntries ([ce842c1](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/ce842c1c5bebef890983a4fc0d1cc76034ebe6af))
+* preserve test attachments when merging TRX files ([161c771](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/161c77112edab851932087b78ad3a2a50f58d104))
+
+### Bug Fixes
+
+* apply source namespace to all created XML elements to prevent empty xmlns attributes ([#150](https://www.github.com/ricardofslp/dotnet-trx-merge/issues/150)) ([166c9e9](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/166c9e99e2a3327c0dea04d35d1bb8d61af429d3))
+
 <a name="2.1.2"></a>
 ## [2.1.2](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.1.2) (2025-06-26)
 
