@@ -217,11 +217,9 @@ public class DotNetTrxMergeTests
         MergeCommandConfiguration mergeCommandConfiguration = new MergeCommandConfiguration();
         mergeCommandConfiguration.Set(command);
 
-        ParseResult result =
-            new Parser(command).Parse($"{args}");
-        InvocationContext context = new(result);
+        ParseResult result = command.Parse($"{args}");
 
-        mergeCommandConfiguration.GetValues(context);
+        mergeCommandConfiguration.GetValues(result);
 
         MergeCommand mergeCommand = new MergeCommand(logger,
             mergeCommandConfiguration,

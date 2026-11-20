@@ -26,9 +26,9 @@ public class MergeCommand : RootCommand
         // Set Arguments and Options
         config.Set(this);
 
-        this.SetHandler(async (context) =>
+        this.SetAction(parseResult =>
         {
-            _config.GetValues(context);
+            _config.GetValues(parseResult);
             logger.SetLogLevel(_config.LogLevel);
             Run();
         });
