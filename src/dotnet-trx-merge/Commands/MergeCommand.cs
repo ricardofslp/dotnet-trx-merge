@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.Xml.Linq;
 using dotnet_trx_merge.Commands.Configurations;
 using dotnet_trx_merge.Domain;
+using dotnet_trx_merge.Exceptions;
 using dotnet_trx_merge.Extensions;
 using dotnet_trx_merge.Logging;
 using dotnet_trx_merge.Services;
@@ -39,6 +40,11 @@ public class MergeCommand : RootCommand
         (var trxFiles, var directoryPath) = GetTrxFiles();
         _log.Debug($"Found {trxFiles.Length} files to merge");
 
+        if (trxFiles.Length == 0)
+        {
+            _log.Warning("No trx files were found, nothing was merged");
+        }
+
         if (trxFiles.Length > 0)
         {
             var mergeResult = _trxFetcher.MergeWithAttachments(trxFiles);
@@ -64,13 +70,27 @@ public class MergeCommand : RootCommand
         _log.Debug("Start fetching trx files");
         if (_config.IsDirectory())
         {
-            string directoryPath = Path.GetDirectoryName(_config.Directory)!;
+            string directoryPath = ResolveDirectory(_config.Directory);
             return (Directory.GetFiles(directoryPath,
                 "*.trx",
                 _config.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly), directoryPath);
         }
 
         return (_config.TrxFiles.ToArray(), string.Empty);
+    }
+
+    /// <summary>
+    /// --dir is a folder, with or without a trailing separator.
+    /// (Path.GetDirectoryName would return the parent folder when there is no trailing separator.)
+    /// </summary>
+    private static string ResolveDirectory(string directory)
+    {
+        if (!Directory.Exists(directory))
+        {
+            throw new MergeException($"Directory '{directory}' does not exist");
+        }
+
+        return directory;
     }
 
     private void CopyAttachmentDirectories(List<AttachmentDirectory> attachmentDirectories, string outputDirectory)

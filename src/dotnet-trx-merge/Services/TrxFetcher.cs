@@ -25,7 +25,7 @@ public class TrxFetcher : ITrxFetcher
         var testResultSourceDictionary = new Dictionary<TestIdentity, string>();
         var testDefinitionsDictionary = new Dictionary<string, XElement>();
         var testEntriesDictionary = new Dictionary<TestIdentity, XElement>();
-        var outcomeDictionary = new Dictionary<string, int>();
+        var outcomeDictionary = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         var collectorDataEntries = new List<XElement>();
         string runUser = null;
         XNamespace ns = "";
@@ -73,14 +73,14 @@ public class TrxFetcher : ITrxFetcher
                 if (!testResultDictionary.ContainsKey(testId.TestIdentity) || DateTime.Parse(testResultDictionary[testId.TestIdentity].Attribute("endTime")!.Value) < endTime)
                 {
                     if (testResultDictionary.ContainsKey(testId.TestIdentity))
-                        outcomeDictionary[testResultDictionary[testId.TestIdentity].Attribute("outcome")!.Value.ToLower()]--;
+                        outcomeDictionary[ToCounterName(testResultDictionary[testId.TestIdentity].Attribute("outcome")!.Value)]--;
 
                     testResultDictionary[testId.TestIdentity] = unitTestResult;
                     testResultSourceDictionary[testId.TestIdentity] = trxDirectory;
                     testDefinitionsDictionary[testId.TestIdentity.TestId] = GetTestDefinition(definitions, testId.TestIdentity.TestId);
                     testEntriesDictionary[testId.TestIdentity] = GetTestEntry(entries, testId.TestEntryId);
 
-                    var outcomeValue = testResultDictionary[testId.TestIdentity].Attribute("outcome")!.Value.ToLower();
+                    var outcomeValue = ToCounterName(testResultDictionary[testId.TestIdentity].Attribute("outcome")!.Value);
 
                     if(!outcomeDictionary.ContainsKey(outcomeValue!))
                         outcomeDictionary[outcomeValue] = 0;
@@ -118,12 +118,19 @@ public class TrxFetcher : ITrxFetcher
         return new MergeResult(mergedDocument, attachmentDirectories);
     }
 
+    /// <summary>
+    /// The TRX schema names the counters after the outcome with a lower case first letter
+    /// (NotExecuted -> notExecuted, InProgress -> inProgress). Lowering the whole name is rejected by Visual Studio.
+    /// </summary>
+    private static string ToCounterName(string outcome)
+        => string.IsNullOrEmpty(outcome) ? outcome : char.ToLowerInvariant(outcome[0]) + outcome[1..];
+
     private XElement CreateOutcome(XNamespace ns, Dictionary<string, int> outcomes, List<XElement> collectorDataEntries)
     {
         var resultSummaryElement = new XElement(ns + "ResultSummary");
         var countersElement = new XElement(ns + "Counters");
         // Define the default attribute values
-        var attributes = new Dictionary<string, int>
+        var attributes = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
             { "total", 0 },
             { "passed", 0 },
