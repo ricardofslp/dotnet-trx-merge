@@ -2,19 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
-<a name="3.0.0-alpha.0"></a>
-## [3.0.0-alpha.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v3.0.0-alpha.0) (2026-11-20)
-
-### ⚠ BREAKING CHANGES
-
-* the tool now targets .NET 10 (LTS). Running it requires the .NET 10 runtime, .NET 8 reached end of support on 2026-11-10 ([f34c73b](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/f34c73b3121c0622caa089ff4ebbdb978a55ec4d))
-* System.CommandLine 2.0: invalid command line arguments now exit with a non zero exit code
-
-### Bug Fixes
-
-* resolve --dir without trailing separator and keep camelCase counters ([#222](https://www.github.com/ricardofslp/dotnet-trx-merge/issues/222), [#149](https://www.github.com/ricardofslp/dotnet-trx-merge/issues/149)) ([913cbdb](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/913cbdba71b92baad5a5e5ba3d5ab43248b2943b))
-* use full SDK version in global.json ([b04e6dc](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/b04e6dc9316643308ca0000538fb64668ed8e247))
-
 <a name="2.2.0"></a>
 ## [2.2.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.2.0) (2026-02-27)
 
