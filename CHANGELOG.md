@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="3.0.0"></a>
+## [3.0.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v3.0.0) (2026-11-20)
+
+### Features
+
+* target .NET 10 and System.CommandLine 2.0 ([f40980c](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/f40980cb549a8997e3989a8397c268053daba419))
+
+### Bug Fixes
+
+* --dir without trailing separator and camelCase counters ([#222](https://www.github.com/ricardofslp/dotnet-trx-merge/issues/222), [#149](https://www.github.com/ricardofslp/dotnet-trx-merge/issues/149)) ([#227](https://www.github.com/ricardofslp/dotnet-trx-merge/issues/227)) ([97ff266](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/97ff266e4caf3bf4429a53929b5e4460e7c06939))
+* resolve --dir without trailing separator and keep camelCase counters ([913cbdb](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/913cbdba71b92baad5a5e5ba3d5ab43248b2943b))
+* use full SDK version in global.json ([b04e6dc](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/b04e6dc9316643308ca0000538fb64668ed8e247))
+
+### Breaking Changes
+
+* target .NET 10 and System.CommandLine 2.0 ([f40980c](https://www.github.com/ricardofslp/dotnet-trx-merge/commit/f40980cb549a8997e3989a8397c268053daba419))
+
 <a name="2.2.0"></a>
 ## [2.2.0](https://www.github.com/ricardofslp/dotnet-trx-merge/releases/tag/v2.2.0) (2026-02-27)
 
