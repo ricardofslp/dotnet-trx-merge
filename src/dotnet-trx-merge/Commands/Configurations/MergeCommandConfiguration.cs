@@ -1,5 +1,5 @@
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.Parsing;
 using dotnet_trx_merge.Exceptions;
 using dotnet_trx_merge.Logging;
 
@@ -21,49 +21,51 @@ public class MergeCommandConfiguration
 
     #region Options
 
-    private readonly Option<IEnumerable<string>> FilesOption = new(new[] { "--file", "-f" })
+    private readonly Option<string[]> FilesOption = new("--file", "-f")
     {
         Description = "Trx file to merge. Can be set several times. Cannot be used with --dir.",
-        IsRequired = false
+        Required = false
     };
     
-    private readonly Option<string> DirectoryOption = new(new[] { "--dir", "-d" })
+    private readonly Option<string> DirectoryOption = new("--dir", "-d")
     {
         Description = "Folder to look for trx files. Cannot be used with --file.",
-        IsRequired = false,
+        Required = false,
         Arity = ArgumentArity.ZeroOrOne
     };
 
-    private readonly Option<LogLevel> LogLevelOption = new(new[] { "--loglevel" }, parseArgument: Logger.ParseLogLevel, isDefault: true)
+    private readonly Option<LogLevel> LogLevelOption = new("--loglevel")
     {
         Description = "Log Level",
-        IsRequired = false
+        Required = false,
+        DefaultValueFactory = _ => LogLevel.Verbose,
+        CustomParser = Logger.ParseLogLevel
     };
     
-    private readonly Option<string> RecursiveOption = new(new[] { "--recursive", "-r" })
+    private readonly Option<bool> RecursiveOption = new("--recursive", "-r")
     {
         Description = "Search recursively in folder.",
-        IsRequired = false,
+        Required = false,
         Arity = ArgumentArity.Zero
     };
 
-    private readonly Option<string> NamespaceOption = new(new[] { "--namespace", "-n" })
+    private readonly Option<string> NamespaceOption = new("--namespace", "-n")
     {
         Description = "Namespace to add to output file.",
-        IsRequired = false
+        Required = false
     };
     
-    private readonly Option<string> OutputPathOption =
-        new(new[] { "--output", "-o" }, getDefaultValue: () => $"./mergedTrx_{DateTime.Now.ToFileTime()}.trx")
+    private readonly Option<string> OutputPathOption = new("--output", "-o")
     {
         Description = "Output file path. Must include the file name, not just a directory.",
-        IsRequired = false
+        Required = false,
+        DefaultValueFactory = _ => $"./mergedTrx_{DateTime.Now.ToFileTime()}.trx"
     };
     
-    private readonly Option<string> CopyOriginalFilesOption = new(new[] { "--copyOriginalFiles", "-c" })
+    private readonly Option<bool> CopyOriginalFilesOption = new("--copyOriginalFiles", "-c")
     {
         Description = "Copy Original Files.",
-        IsRequired = false,
+        Required = false,
         Arity = ArgumentArity.Zero
     };
 
@@ -80,15 +82,15 @@ public class MergeCommandConfiguration
         cmd.Add(CopyOriginalFilesOption);
     }
 
-    public void GetValues(InvocationContext context)
+    public void GetValues(ParseResult parseResult)
     {
-        TrxFiles = context.ParseResult.GetValueForOption(FilesOption)!;
-        LogLevel = context.ParseResult.GetValueForOption(LogLevelOption);
-        Directory = context.ParseResult.GetValueForOption(DirectoryOption)!;
-        Recursive = context.ParseResult.FindResultFor(RecursiveOption) is not null;
-        Namespace = context.ParseResult.GetValueForOption(NamespaceOption)!;
-        OutputPath = context.ParseResult.GetValueForOption(OutputPathOption)!;
-        CopyOriginalFiles = context.ParseResult.FindResultFor(CopyOriginalFilesOption) is not null;
+        TrxFiles = parseResult.GetValue(FilesOption) ?? Array.Empty<string>();
+        LogLevel = parseResult.GetValue(LogLevelOption);
+        Directory = parseResult.GetValue(DirectoryOption)!;
+        Recursive = parseResult.GetValue(RecursiveOption);
+        Namespace = parseResult.GetValue(NamespaceOption)!;
+        OutputPath = parseResult.GetValue(OutputPathOption)!;
+        CopyOriginalFiles = parseResult.GetValue(CopyOriginalFilesOption);
         
         ValidateInput();
     }

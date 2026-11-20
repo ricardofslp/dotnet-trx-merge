@@ -70,7 +70,7 @@ public class MergeCommandTests
         var command = new MergeCommand(logger, config, trxFetcher);
 
         // Act
-        await command.InvokeAsync($"-f {FirstFilePath} -f {SecondFilePath}");
+        await command.Parse($"-f {FirstFilePath} -f {SecondFilePath}").InvokeAsync();
 
         // Assert
         trxFetcher.Received(1).MergeWithAttachments(Arg.Is<string[]>(files =>
@@ -82,8 +82,7 @@ public class MergeCommandTests
     {
         var command = new Command("trx-merge");
         configuration.Set(command);
-        var result = new Parser(command).Parse(options);
-        var context = new InvocationContext(result);
-        configuration.GetValues(context);
+        var result = command.Parse(options);
+        configuration.GetValues(result);
     }
 }

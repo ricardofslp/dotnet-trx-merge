@@ -30,10 +30,10 @@ public class MergeCommandConfigurationTests
         _configuration.Set(Command);
 
         //Assert
-        var option = Command.Children.FirstOrDefault(x => x is Option opt && opt.HasAlias(optionName)) as Option;
+        var option = Command.Children.FirstOrDefault(x => x is Option opt && (opt.Name == optionName || opt.Aliases.Contains(optionName))) as Option;
         option.Should().NotBeNull();
         option!.Description.Should().Be(description);
-        option!.IsRequired.Should().Be(isRequired);
+        option!.Required.Should().Be(isRequired);
     }
 
     [Fact]
@@ -41,11 +41,10 @@ public class MergeCommandConfigurationTests
     {
         //Arrange
         _configuration.Set(Command); 
-        var result = new Parser(Command).Parse("--file file1 --file file2 --output output --loglevel Debug --namespace http://test");
-        var context = new InvocationContext(result);
+        var result = Command.Parse("--file file1 --file file2 --output output --loglevel Debug --namespace http://test");
 
         //Act
-        _configuration.GetValues(context);
+        _configuration.GetValues(result);
 
         //Assert
         _configuration.TrxFiles.Should().HaveCount(2);
@@ -61,11 +60,10 @@ public class MergeCommandConfigurationTests
     {
         //Arrange
         _configuration.Set(Command); 
-        var result = new Parser(Command).Parse("-f file");
-        var context = new InvocationContext(result);
+        var result = Command.Parse("-f file");
 
         //Act
-        _configuration.GetValues(context);
+        _configuration.GetValues(result);
 
         //Assert
         _configuration.TrxFiles.Should().HaveCount(1);
@@ -77,11 +75,10 @@ public class MergeCommandConfigurationTests
     {
         //Arrange
         _configuration.Set(Command); 
-        var result = new Parser(Command).Parse("");
-        var context = new InvocationContext(result);
+        var result = Command.Parse("");
 
         //Act
-        var act = () =>_configuration.GetValues(context);
+        var act = () =>_configuration.GetValues(result);
 
         //Assert
         act.Should().Throw<MergeException>().WithMessage("Need to have either -f or -d configured");
@@ -92,11 +89,10 @@ public class MergeCommandConfigurationTests
     {
         //Arrange
         _configuration.Set(Command); 
-        var result = new Parser(Command).Parse("-f file -d directory");
-        var context = new InvocationContext(result);
+        var result = Command.Parse("-f file -d directory");
 
         //Act
-        var act = () =>_configuration.GetValues(context);
+        var act = () =>_configuration.GetValues(result);
 
         //Assert
         act.Should().Throw<MergeException>().WithMessage("Cannot have -f and -d configured at the same time");
@@ -107,11 +103,10 @@ public class MergeCommandConfigurationTests
     {
         //Arrange
         _configuration.Set(Command); 
-        var result = new Parser(Command).Parse("-f file -r");
-        var context = new InvocationContext(result);
+        var result = Command.Parse("-f file -r");
 
         //Act
-        var act = () =>_configuration.GetValues(context);
+        var act = () =>_configuration.GetValues(result);
 
         //Assert
         act.Should().Throw<MergeException>().WithMessage("Cannot have -f and -r configured at the same time");

@@ -1,5 +1,4 @@
-﻿using System.CommandLine.Builder;
-using System.CommandLine.Parsing;
+﻿using System.CommandLine;
 using System.IO.Abstractions;
 using System.Reflection;
 using dotnet_trx_merge.Commands;
@@ -20,25 +19,31 @@ var serviceProvider = new ServiceCollection()
 var Log = serviceProvider.GetRequiredService<ILogger>();
 var cmd = serviceProvider.GetService<MergeCommand>();
 
-await new CommandLineBuilder(cmd)
-    .UseDefaults()
-    .UseExceptionHandler((exception, context) =>
+var invocationConfiguration = new InvocationConfiguration { EnableDefaultExceptionHandler = false };
+
+try
+{
+    var exitCode = await cmd!.Parse(args).InvokeAsync(invocationConfiguration);
+    if (exitCode != 0 && Environment.ExitCode == 0)
     {
-        if (exception is MergeException
-            || (exception is TargetInvocationException
-                && exception.InnerException is MergeException))
-        {
-            Log.Error(exception.Message);
-            Log.Debug(exception.StackTrace ?? string.Empty);
-        }
-        else
-        {
-            Log.Exception(exception);
-        }
-        
-        Environment.ExitCode = 1;
-    })
-    .Build()
-    .InvokeAsync(args);
+        Environment.ExitCode = exitCode;
+    }
+}
+catch (Exception exception)
+{
+    if (exception is MergeException
+        || (exception is TargetInvocationException
+            && exception.InnerException is MergeException))
+    {
+        Log.Error(exception.Message);
+        Log.Debug(exception.StackTrace ?? string.Empty);
+    }
+    else
+    {
+        Log.Exception(exception);
+    }
+
+    Environment.ExitCode = 1;
+}
 
 return Environment.ExitCode;
