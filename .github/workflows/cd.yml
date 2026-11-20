@@ -4,6 +4,11 @@ run-name: CD - ${{ github.event.release.tag_name }}
 on:
   release:
     types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # needed by NuGet trusted publishing (OIDC)
 
 defaults:
   run:
@@ -40,7 +45,13 @@ jobs:
       - name: pack
         run: dotnet pack dotnet-trx-merge --configuration Release --no-build --no-restore
 
+      - name: nuget login (trusted publishing)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ricardofslp
+
       - name: push
         run: dotnet nuget push nupkg/dotnet-trx-merge.*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY --skip-duplicate
         env:
-          NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
